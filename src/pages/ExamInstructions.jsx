@@ -34,14 +34,9 @@ function ExamInstructions() {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
+              onClick={() => navigate("/studentdetails")}
             >
-              <Button>
-                <ArrowBackIcon
-                  fontSize="large"
-                  onClick={() => navigate("/studentdetails")}
-                  style={{ color: "#000000" }}
-                />
-              </Button>
+              <ArrowBackIcon fontSize="large" style={{ color: "#000000" }} />
             </IconButton>
             <Typography sx={{ color: "#FFFFFF" }}>
               General Instructions
@@ -145,7 +140,8 @@ function ExamInstructions() {
               variant="contained"
               disabled={!isChecked}
               size="lg"
-              block
+              //   block
+              fullWidth
               onClick={() => navigate("/mocktest")}
             >
               START EXAM

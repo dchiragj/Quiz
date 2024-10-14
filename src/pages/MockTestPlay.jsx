@@ -14,7 +14,6 @@ const MockTestPlay = () => {
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
   console.log("selectedAnswers", selectedAnswers);
-  console.log(isResultModel);
 
   const handleOptionSelect = (id, optionKey) => {
     setSelectedAnswers((prevAnswers) => {
@@ -46,7 +45,6 @@ const MockTestPlay = () => {
     } catch (error) {
       console.log("error", error);
     }
-
     // navigate("/mocktestsecond");
   };
   const saveAndExit = () => {
@@ -88,13 +86,10 @@ const MockTestPlay = () => {
               color: "#000000",
               padding: 2,
               borderRadius: 2,
-              marginBottom: 5,
+              marginBottom: 3,
             }}
           >
-            <Typography
-              variant="body1"
-              sx={{ textAlign: "left", marginBottom: 3 }}
-            >
+            <Box variant="body1" sx={{ textAlign: "left", marginBottom: 3 }}>
               {(() => {
                 const imgMatch = mock.qText.match(/\(#(\d+)img\)/);
                 const imgSrc = imgMatch
@@ -127,7 +122,7 @@ const MockTestPlay = () => {
                   </>
                 );
               })()}
-            </Typography>
+            </Box>
 
             <Grid container spacing={2}>
               {Object.entries(mock.options).map(([key, value]) => (
@@ -136,7 +131,12 @@ const MockTestPlay = () => {
                     fullWidth
                     variant="outlined"
                     sx={{
-                      color: "black",
+                      color:
+                        selectedAnswers.find(
+                          (answer) => answer.questionId === mock.questionId
+                        )?.selectedAnswer === key
+                          ? "white"
+                          : "black",
                       borderColor: "#1A73E8",
 
                       borderRadius: 2,
@@ -189,14 +189,31 @@ const MockTestPlay = () => {
         ))}
       </Box>
       <div className="mt-4 d-flex justify-content-center">
-        <Button onClick={handleSubmit} variant="contained">
+        <Button
+          onClick={handleSubmit}
+          disabled={selectedAnswers.length < mockTestData?.data?.length}
+          variant="contained"
+        >
           Submit
         </Button>
       </div>
+      {isResultModel && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+          }}
+        />
+      )}
       <div
-        className={`modal fade ${isResultModel && "show"}`}
-        style={{ display: isResultModel ? "block" : "none" }}
-        tabindex="-1"
+        className={`modal fade ${isResultModel && "show"} `}
+        style={{ display: isResultModel ? "block" : "none", zIndex: 1050 }}
+        tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalCenterTitle"
         aria-hidden={!isResultModel}

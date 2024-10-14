@@ -22,7 +22,6 @@ function StudentDetails() {
   const navigate = useNavigate();
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
-  console.log(studentData, "data");
 
   return (
     <div>
@@ -35,14 +34,9 @@ function StudentDetails() {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
+              onClick={() => navigate("/studentlogin")}
             >
-              <Button>
-                <ArrowBackIcon
-                  fontSize="large"
-                  onClick={() => navigate("/studentlogin")}
-                  style={{ color: "#000000" }}
-                />
-              </Button>
+              <ArrowBackIcon fontSize="large" style={{ color: "#000000" }} />
             </IconButton>
             <div className="d-flex justify-content-between align-items-center gap-4">
               <a className="navbar-brand" href="#">

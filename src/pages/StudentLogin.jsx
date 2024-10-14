@@ -22,6 +22,10 @@ function StudentLogin() {
     enrollment: "",
     dateOfBirth: "",
   });
+  const [focus, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+  const onFocus = () => setFocused(true);
+  const onBlur = () => setFocused(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,6 +33,11 @@ function StudentLogin() {
       ...loginData,
       [name]: value,
     });
+    if (e.target.name == "dateOfBirth" && e.target.value) {
+      setHasValue(true);
+    } else {
+      setHasValue(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -36,7 +45,9 @@ function StudentLogin() {
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
       alert(response.data.message);
-      navigate("/otp");
+      if (response.data.status) {
+        navigate("/otp");
+      }
     } catch (error) {
       console.log("error-->", error);
     }
@@ -75,7 +86,7 @@ function StudentLogin() {
             variant="outlined"
             fullWidth
             margin="normal"
-            label="MOBILE NUMBER / emailid"
+            label="MOBILE NUMBER / EMAIL ID"
             name="common"
             value={loginData.common}
             onChange={handleChange}
@@ -90,15 +101,20 @@ function StudentLogin() {
             onChange={handleChange}
           />
           <TextField
+            onFocus={onFocus}
+            onBlur={onBlur}
+            // InputProps={{
+            //   inputProps: { min: "2020-05-01", max: "2024-12-31" },
+            // }}
+            type={hasValue || focus ? "date" : "text"}
             variant="outlined"
             fullWidth
             margin="normal"
             label="DATE OF BIRTH"
             name="dateOfBirth"
-            type="date"
             value={loginData.dateOfBirth}
-            onChange={handleChange}
-          />
+            onChange={(e) => handleChange(e)}
+          />{" "}
           <Link href="#" className="d-block text-end mb-3 text-muted">
             Forgot Enrollment No./ DOB ?
           </Link>

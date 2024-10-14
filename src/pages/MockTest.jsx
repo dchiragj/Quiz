@@ -23,9 +23,9 @@ const MockTest = () => {
     try {
       const response = await QuizQuestionsList();
       setMockTestData(response.data);
-      navigate("/mocktestplay");
-      // alert(response.data.message);
-      // navigate("/otp");
+      if (response.data.status) {
+        navigate("/mocktestplay");
+      }
     } catch (error) {
       console.log("error-->", error);
     }
@@ -63,7 +63,7 @@ const MockTest = () => {
           <Divider sx={{ marginY: 2 }} />
           <List>
             <ListItem
-              button
+              // button
               sx={{ backgroundColor: "#333", borderRadius: "4px" }}
             >
               <ListItemText
