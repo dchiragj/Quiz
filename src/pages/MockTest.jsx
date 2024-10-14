@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Card,
   CardContent,
@@ -12,15 +12,17 @@ import { TbMathSymbols } from "react-icons/tb";
 import { FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SearchAppBar from "../components/Appbar";
-import { QuizzQuestionsList } from "../common/getdata";
+import { QuizQuestionsList } from "../common/getdata";
+import { AuthContext } from "./context/AuthContext";
 
 const MockTest = () => {
   const navigate = useNavigate();
+  const { setMockTestData } = useContext(AuthContext);
 
   const handleMockTestPlayButton = async () => {
     try {
-      const response = await QuizzQuestionsList();
-      console.log(response);
+      const response = await QuizQuestionsList();
+      setMockTestData(response.data);
       navigate("/mocktestplay");
       // alert(response.data.message);
       // navigate("/otp");
@@ -32,19 +34,21 @@ const MockTest = () => {
   return (
     <>
       <SearchAppBar />
-      <Card sx={{ margin: 2, backgroundColor: "#1C1C1C", color: "#fff" }}>
+      <Card sx={{ margin: 2, color: "#fff" }}>
         <CardContent>
           <div className="w-100 d-flex justify-content-start align-items-center">
             <div variant="h2">
-              <TbMathSymbols fontSize={"40px"} />
+              <TbMathSymbols color="#000000" fontSize={"40px"} />
             </div>
             <div className="w-100 d-flex flex-column justify-content-between ml-4 gy-5">
               <div className="d-flex justify-content-between align-items-center">
-                <Typography variant="h6">Maths Practice</Typography>
-                <span>12:00</span>
+                <Typography variant="h6" color="#000000">
+                  Maths Practice
+                </Typography>
+                <span style={{ color: "black" }}>12:00</span>
               </div>
               <div className="d-flex justify-content-between align-items-center">
-                <Typography variant="body2" color="#FFFFFF">
+                <Typography variant="body2" color="#000000">
                   What would you like to do next?
                 </Typography>
                 <button

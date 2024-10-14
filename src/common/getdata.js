@@ -15,7 +15,14 @@ export const StudentLoginWithOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/Auth/LoginWithOTP`, values);
 };
 
-export const QuizzQuestionsList = () => {
+export const QuizQuestionsList = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzQuestionList`, { headers: authHeader() })
+}
+
+export const SaveQuizAnswer = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/SaveQuizzResult`, values, { headers: authHeader() })
+}
+export const GetQuizResult = () => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzResult`, { headers: authHeader() })
 }
 

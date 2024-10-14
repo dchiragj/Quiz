@@ -93,7 +93,7 @@ function StudentLogin() {
             variant="outlined"
             fullWidth
             margin="normal"
-            // label="DATE OF BIRTH"
+            label="DATE OF BIRTH"
             name="dateOfBirth"
             type="date"
             value={loginData.dateOfBirth}
