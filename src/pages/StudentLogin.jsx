@@ -6,6 +6,9 @@ import {
   TextField,
   Link,
   IconButton,
+  AppBar,
+  Toolbar,
+  Box,
 } from "@mui/material";
 import student from "../assets/studentlogin.png";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -24,6 +27,11 @@ function StudentLogin() {
   });
   const [focus, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
+  const [error, setError] = useState({
+    common: "",
+    enrollment: "",
+    dateOfBirth: "",
+  });
   const onFocus = () => setFocused(true);
   const onBlur = () => setFocused(false);
 
@@ -38,9 +46,36 @@ function StudentLogin() {
     } else {
       setHasValue(false);
     }
+    setError((prevError) => ({
+      ...prevError,
+      [name]: "",
+    }));
   };
 
-  const handleSubmit = async () => {
+  const validateForm = () => {
+    let valid = true;
+    let newError = {};
+
+    if (!loginData.common) {
+      newError.common = "Mobile number or email ID is required";
+      valid = false;
+    }
+    if (!loginData.enrollment) {
+      newError.enrollment = "Enrollment number is required";
+      valid = false;
+    }
+    if (!loginData.dateOfBirth) {
+      newError.dateOfBirth = "Date of Birth is required";
+      valid = false;
+    }
+
+    setError(newError);
+    return valid;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    validateForm();
     try {
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
@@ -54,18 +89,28 @@ function StudentLogin() {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f8f9fa",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Container className="login-container p-4 bg-white rounded shadow-sm">
-        <IconButton onClick={() => navigate("/login")}>
-          <IoMdArrowRoundBack />
-        </IconButton>
+    <div>
+      <Box className="w-100">
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={() => navigate("/login")} // Move onClick handler here
+            >
+              <IoMdArrowRoundBack color="#000000" />
+            </IconButton>
+
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Student Login
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <div className="login-container p-2 bg-white rounded shadow-sm">
         <img
           src={student}
           alt="KAMP logo with a human head silhouette filled with dots and the text 'Knowledge & Awareness Mapping Platform'"
@@ -90,6 +135,8 @@ function StudentLogin() {
             name="common"
             value={loginData.common}
             onChange={handleChange}
+            error={!!error.common}
+            helperText={error.common}
           />
           <TextField
             variant="outlined"
@@ -99,6 +146,8 @@ function StudentLogin() {
             name="enrollment"
             value={loginData.enrollment}
             onChange={handleChange}
+            error={!!error.enrollment}
+            helperText={error.enrollment}
           />
           <TextField
             onFocus={onFocus}
@@ -114,6 +163,8 @@ function StudentLogin() {
             name="dateOfBirth"
             value={loginData.dateOfBirth}
             onChange={(e) => handleChange(e)}
+            error={!!error.dateOfBirth}
+            helperText={error.dateOfBirth}
           />{" "}
           <Link href="#" className="d-block text-end mb-3 text-muted">
             Forgot Enrollment No./ DOB ?
@@ -127,7 +178,7 @@ function StudentLogin() {
             GENERATE OTP
           </Button>
         </form>
-      </Container>
+      </div>
     </div>
   );
 }
