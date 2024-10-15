@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -15,6 +15,8 @@ import { AuthContext } from "./context/AuthContext";
 import { StudentLoginWithOTP } from "../common/getdata";
 import { RiVerifiedBadgeLine } from "react-icons/ri";
 import Toolbar from "@mui/material/Toolbar";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function OtpVerification() {
   const { authData } = useContext(AuthContext);
@@ -50,13 +52,15 @@ function OtpVerification() {
 
     try {
       const response = await StudentLoginWithOTP(otpData);
-      alert(response.data.message);
       localStorage.setItem("user", JSON.stringify(response.data.data));
 
       if (response.data.status) {
         navigate("/studentdetails", {
           state: { studentData: response.data.data },
         });
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log("error-->", error);
@@ -77,7 +81,7 @@ function OtpVerification() {
                 sx={{ mr: 2 }}
                 onClick={() => navigate("/studentlogin")} // Move onClick handler here
               >
-                <ArrowBackIcon fontSize="large" />
+                <ArrowBackIcon style={{ color: "#000000" }} fontSize="large" />
               </IconButton>
 
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

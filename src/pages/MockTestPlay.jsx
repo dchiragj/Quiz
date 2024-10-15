@@ -3,7 +3,6 @@ import {
   AppBar,
   Box,
   Button,
-  Container,
   IconButton,
   Toolbar,
   Typography,
@@ -17,11 +16,10 @@ import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
 const MockTestPlay = () => {
   const navigate = useNavigate();
   const { mockTestData } = useContext(AuthContext);
-
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
-  console.log("selectedAnswers", selectedAnswers);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const handleOptionSelect = (id, optionKey) => {
     setSelectedAnswers((prevAnswers) => {
@@ -44,6 +42,20 @@ const MockTestPlay = () => {
     });
   };
 
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < mockTestData.data.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    } else {
+      navigate("/mocktest");
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       await SaveQuizAnswer(selectedAnswers);
@@ -53,16 +65,16 @@ const MockTestPlay = () => {
     } catch (error) {
       console.log("error", error);
     }
-    // navigate("/mocktestsecond");
   };
+
   const saveAndExit = () => {
-    navigate("/studentlogin");
+    navigate("/mocktest");
     localStorage.clear();
   };
 
   return (
     <div
-      maxWidth="sm"
+      maxwidth="sm"
       sx={{
         backgroundColor: "",
         height: "100vh",
@@ -81,7 +93,7 @@ const MockTestPlay = () => {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              onClick={() => navigate("/mocktest")} // Move onClick handler here
+              onClick={handlePreviousQuestion}
             >
               <IoMdArrowRoundBack color="#000000" />
             </IconButton>
@@ -94,9 +106,8 @@ const MockTestPlay = () => {
       </Box>
 
       <Box sx={{ flexGrow: 1, overflowY: "auto", paddingBottom: 2 }}>
-        {mockTestData?.data?.map((mock, index) => (
+        {mockTestData?.data?.length > 0 && (
           <Box
-            key={index}
             sx={{
               color: "#000000",
               padding: 2,
@@ -106,14 +117,37 @@ const MockTestPlay = () => {
           >
             <Box variant="body1" sx={{ textAlign: "left", marginBottom: 3 }}>
               {(() => {
-                const imgMatch = mock.qText.match(/\(#(\d+)img\)/);
+                const currentQuestion = mockTestData.data[currentQuestionIndex];
+                const imgMatch = currentQuestion.qText.match(/\(#(\d+)img\)/);
                 const imgSrc = imgMatch
                   ? require(`../assets/imgs/${imgMatch[1]}img.png`)
                   : null;
-                const splitedData = mock.qText.split(/\s*\(#\d+img\)\s*/);
+                const splitedData =
+                  currentQuestion.qText.split(/\s*\(#\d+img\)\s*/);
                 return (
                   <>
-                    {index + 1}.{splitedData[0]}
+                    {/* {currentQuestionIndex + 1}.{splitedData[0]}
+                    {imgSrc && (
+                      <Box
+                        sx={{
+                          margin: "10px 0",
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`${imgMatch[1]}img`}
+                          style={{
+                            maxwidth: "100%",
+                            maxheight: "200px",
+                            height: "auto",
+                          }}
+                        />
+                      </Box>
+                    )}
+                    {splitedData[1]} */}
+                    {currentQuestionIndex + 1}.{splitedData[0]}
                     {imgSrc && (
                       <Box
                         sx={{
@@ -140,7 +174,9 @@ const MockTestPlay = () => {
             </Box>
 
             <Grid container spacing={2}>
-              {Object.entries(mock.options).map(([key, value]) => (
+              {Object.entries(
+                mockTestData.data[currentQuestionIndex].options
+              ).map(([key, value]) => (
                 <Grid item xs={12} key={key}>
                   <Button
                     fullWidth
@@ -148,29 +184,24 @@ const MockTestPlay = () => {
                     sx={{
                       color:
                         selectedAnswers.find(
-                          (answer) => answer.questionId === mock.questionId
+                          (answer) =>
+                            answer.questionId ===
+                            mockTestData.data[currentQuestionIndex].questionId
                         )?.selectedAnswer === key
                           ? "white"
                           : "black",
                       borderColor: "#1A73E8",
-
                       borderRadius: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
                       backgroundColor:
                         selectedAnswers.find(
-                          (answer) => answer.questionId === mock.questionId
+                          (answer) =>
+                            answer.questionId ===
+                            mockTestData.data[currentQuestionIndex].questionId
                         )?.selectedAnswer === key
                           ? "#1A73E8"
                           : "transparent",
                       "&:hover": {
-                        backgroundColor:
-                          selectedAnswers.find(
-                            (answer) => answer.questionId === mock.questionId
-                          )?.selectedAnswer === key
-                            ? "#1A73E8"
-                            : "#1A73E8",
+                        backgroundColor: "#1A73E8",
                         color: "white",
                       },
                       ":active": {
@@ -178,7 +209,12 @@ const MockTestPlay = () => {
                         color: "white",
                       },
                     }}
-                    onClick={() => handleOptionSelect(mock.questionId, key)}
+                    onClick={() =>
+                      handleOptionSelect(
+                        mockTestData.data[currentQuestionIndex].questionId,
+                        key
+                      )
+                    }
                   >
                     {value.includes("#") ? (
                       <img
@@ -201,17 +237,26 @@ const MockTestPlay = () => {
               ))}
             </Grid>
           </Box>
-        ))}
+        )}
       </Box>
-      <div className="my-4 d-flex justify-content-center">
-        <Button
-          onClick={handleSubmit}
-          disabled={selectedAnswers.length < mockTestData?.data?.length}
-          variant="contained"
-        >
-          Submit
-        </Button>
+
+      <div className="my-2 d-flex justify-content-center">
+        {currentQuestionIndex < mockTestData?.data?.length - 1 && (
+          <Button onClick={handleNextQuestion} variant="contained">
+            Next
+          </Button>
+        )}
+        {currentQuestionIndex === mockTestData?.data?.length - 1 && (
+          <Button
+            onClick={handleSubmit}
+            disabled={selectedAnswers.length < mockTestData?.data?.length}
+            variant="contained"
+          >
+            Submit
+          </Button>
+        )}
       </div>
+
       {isResultModel && (
         <Box
           sx={{
@@ -225,6 +270,7 @@ const MockTestPlay = () => {
           }}
         />
       )}
+      {/* Result modal */}
       <div
         className={`modal fade ${isResultModel && "show"} `}
         style={{ display: isResultModel ? "block" : "none", zIndex: 1050 }}

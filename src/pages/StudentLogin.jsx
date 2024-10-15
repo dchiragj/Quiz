@@ -12,10 +12,11 @@ import {
 } from "@mui/material";
 import student from "../assets/studentlogin.png";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { StudentGenerateOTP } from "../common/getdata";
 import { AuthContext } from "./context/AuthContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function StudentLogin() {
   const navigate = useNavigate();
@@ -79,9 +80,12 @@ function StudentLogin() {
     try {
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
-      alert(response.data.message);
       if (response.data.status) {
+        toast.success(response.data.message);
+
         navigate("/otp");
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log("error-->", error);
@@ -90,7 +94,7 @@ function StudentLogin() {
 
   return (
     <div>
-      <Box className="w-100">
+      {/* <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -109,7 +113,7 @@ function StudentLogin() {
             </Typography>
           </Toolbar>
         </AppBar>
-      </Box>
+      </Box> */}
       <div className="login-container p-2 bg-white rounded shadow-sm">
         <img
           src={student}

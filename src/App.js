@@ -10,12 +10,15 @@ import OtpVerification from './pages/OtpVerification';
 import { AuthProvider } from './pages/context/AuthContext';
 import ExamInstructions from './pages/ExamInstructions';
 import StudentDetails from './pages/StudentDetails';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 function App() {
   return (
     <>
       <Routes >
-
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/studentlogin" element={<AuthProvider><StudentLogin /></AuthProvider>} />
@@ -23,11 +26,21 @@ function App() {
         <Route path="/mocktest" element={<AuthProvider><MockTest /></AuthProvider>} />
         <Route path="/mocktestplay" element={<AuthProvider><MockTestPlay /></AuthProvider>} />
         <Route path="/mocktestsecond" element={<MockTestSecond />} />
-        <Route path="/studentdetails" element={<StudentDetails />} />
+        <Route path="/studentdetails" element={<AuthProvider><StudentDetails /></AuthProvider>} />
         <Route path="/examintroduction" element={<ExamInstructions />} />
-
-
       </Routes>
+      <ToastContainer
+        position="top-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </>
   );
 }
