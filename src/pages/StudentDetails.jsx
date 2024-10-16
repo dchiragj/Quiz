@@ -5,23 +5,30 @@ import {
   Card,
   CardContent,
   Checkbox,
+  FormControlLabel,
   Grid,
   IconButton,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import navbarlogo from "../assets/studentlogin.png";
 import { FaRegUserCircle } from "react-icons/fa";
 import user from "../assets/user-image.jpg";
 import document from "../assets/document.jpg";
+import { Col, Row } from "react-bootstrap";
 
 function StudentDetails() {
   const navigate = useNavigate();
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheck = () => {
+    setIsChecked(!isChecked);
+  };
 
   return (
     <div>
@@ -133,17 +140,25 @@ function StudentDetails() {
                     </div>
                   </div>
                   {/* Declaration Checkbox */}
-                  <Box mt={2}>
-                    <Checkbox />
-                    <Typography display="inline">
-                      I hereby declare that the above information is true and
-                      correct.
-                    </Typography>
-                  </Box>
+                  <Row className="">
+                    <Col>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={isChecked}
+                            onChange={handleCheck}
+                            color="primary"
+                          />
+                        }
+                        label="I hereby declare that the above information is true and correct."
+                      />
+                    </Col>
+                  </Row>
                   <div className="text-center">
                     <Button
                       variant="contained"
                       color="warning"
+                      disabled={!isChecked}
                       style={{ fontWeight: "bold" }}
                       onClick={() => navigate("/examintroduction")}
                     >

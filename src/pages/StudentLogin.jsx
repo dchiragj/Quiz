@@ -9,6 +9,7 @@ import {
   AppBar,
   Toolbar,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import student from "../assets/studentlogin.png";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,6 +22,7 @@ import "react-toastify/dist/ReactToastify.css";
 function StudentLogin() {
   const navigate = useNavigate();
   const { setAuthData } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     common: "",
     enrollment: "",
@@ -76,18 +78,21 @@ function StudentLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     validateForm();
     try {
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
       if (response.data.status) {
         toast.success(response.data.message);
-
+        setLoading(false);
         navigate("/otp");
       } else {
         toast.error(response.data.message);
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.log("error-->", error);
     }
   };
@@ -114,7 +119,7 @@ function StudentLogin() {
           </Toolbar>
         </AppBar>
       </Box> */}
-      <div className="login-container p-2 bg-white rounded shadow-sm">
+      <div className="login-container p-3 bg-white rounded shadow-sm">
         <img
           src={student}
           alt="KAMP logo with a human head silhouette filled with dots and the text 'Knowledge & Awareness Mapping Platform'"
@@ -179,7 +184,11 @@ function StudentLogin() {
             style={{ backgroundColor: "#1a1aff" }}
             onClick={handleSubmit}
           >
-            GENERATE OTP
+            {loading ? (
+              <CircularProgress size={24} style={{ color: "#fff" }} />
+            ) : (
+              "GENERATE OTP"
+            )}
           </Button>
         </form>
       </div>
