@@ -3,7 +3,7 @@ import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom'
 import MockTest from './pages/MockTest';
 import MockTestPlay from './pages/MockTestPlay';
-import MockTestSecond from './pages/MockTestSecond';
+import MockTestSecond from './pages/FaceCapture';
 import LoginPage from './pages/LoginPage';
 import StudentLogin from './pages/StudentLogin';
 import OtpVerification from './pages/OtpVerification';
@@ -12,6 +12,8 @@ import ExamInstructions from './pages/ExamInstructions';
 import StudentDetails from './pages/StudentDetails';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FaceCapture from './pages/FaceCapture';
+import IdCardCapture from './pages/IdCardCapture';
 
 
 
@@ -28,6 +30,8 @@ function App() {
         <Route path="/mocktestsecond" element={<MockTestSecond />} />
         <Route path="/studentdetails" element={<AuthProvider><StudentDetails /></AuthProvider>} />
         <Route path="/examintroduction" element={<ExamInstructions />} />
+        <Route path="/facecapture" element={<FaceCapture />} />
+        <Route path="/idcard" element={<AuthProvider><IdCardCapture /></AuthProvider>} />
       </Routes>
       <ToastContainer
         position="top-left"

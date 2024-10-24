@@ -69,7 +69,7 @@ const MockTestPlay = () => {
 
   const saveAndExit = () => {
     navigate("/mocktest");
-    localStorage.clear();
+    // localStorage.clear();
   };
 
   return (

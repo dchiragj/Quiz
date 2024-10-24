@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import SearchAppBar from "../components/Appbar";
 import { QuizQuestionsList } from "../common/getdata";
 import { AuthContext } from "./context/AuthContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MockTest = () => {
   const navigate = useNavigate();
@@ -24,7 +26,10 @@ const MockTest = () => {
       const response = await QuizQuestionsList();
       setMockTestData(response.data);
       if (response.data.status) {
+        toast.success(response.data.message); 
         navigate("/mocktestplay");
+      }else{
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log("error-->", error);

@@ -77,21 +77,32 @@ function StudentLogin() {
   };
 
   const handleSubmit = async (e) => {
+    // alert("test1")
     e.preventDefault();
     setLoading(true);
-    validateForm();
+    const isValid = validateForm();
+    if (!isValid) {
+        setLoading(false);
+        return;
+    }
     try {
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
+      // alert(`2 - ${JSON.stringify(response.data)}`)
       if (response.data.status) {
+        // alert("test3",response.data)
         toast.success(response.data.message);
         setLoading(false);
         navigate("/otp");
       } else {
+        // alert(response.data.message,"test4");
         toast.error(response.data.message);
         setLoading(false);
       }
+      setLoading(false)
     } catch (error) {
+      // alert(`catch: ${error}`);
+      
       setLoading(false);
       console.log("error-->", error);
     }

@@ -10,7 +10,16 @@ const authHeader = () => {
 export const StudentGenerateOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/Auth/GenerateOTP`, values);
 };
-
+// export const StudentGenerateOTP = async (values) => {
+// 	try {
+// 		alert(`${process.env.REACT_APP_URL}/api/Auth/GenerateOTP`)
+// 		 const data = await axios.post(`${process.env.REACT_APP_URL}/api/Auth/GenerateOTP`, values);
+// 		 alert(`res: ${JSON.stringify(data)}`)
+// 		 return data
+// 	} catch(e) {
+// 		alert(`catch error api - ${JSON.stringify(e)}`)
+// 	}
+// };
 export const StudentLoginWithOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/Auth/LoginWithOTP`, values);
 };
@@ -24,5 +33,9 @@ export const SaveQuizAnswer = (values) => {
 }
 export const GetQuizResult = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzResult`, { headers: authHeader() })
+}
+export const UploadUserImage = (values) => {
+	alert(`values:${JSON.stringify(values)}`)
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UploadUserImage`,values, { headers: authHeader() })
 }
 

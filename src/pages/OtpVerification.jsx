@@ -55,7 +55,7 @@ function OtpVerification() {
       localStorage.setItem("user", JSON.stringify(response.data.data));
 
       if (response.data.status) {
-        navigate("/studentdetails", {
+        navigate("/mocktest", {
           state: { studentData: response.data.data },
         });
         toast.success(response.data.message);
