@@ -59,14 +59,14 @@ function StudentLogin() {
     let valid = true;
     let newError = {};
 
-    if (!loginData.common) {
-      newError.common = "Mobile number or email ID is required";
+    if (!loginData.common && !loginData.enrollment) {
+      newError.common = "Mobile number or email ID or Enrollment number is required";
       valid = false;
     }
-    if (!loginData.enrollment) {
-      newError.enrollment = "Enrollment number is required";
-      valid = false;
-    }
+    // if (!loginData.enrollment) {
+    //   newError.enrollment = "Enrollment number is required";
+    //   valid = false;
+    // }
     if (!loginData.dateOfBirth) {
       newError.dateOfBirth = "Date of Birth is required";
       valid = false;
@@ -157,7 +157,10 @@ function StudentLogin() {
             onChange={handleChange}
             error={!!error.common}
             helperText={error.common}
+            disabled={!!loginData.enrollment} 
+
           />
+          <div className="text-center">OR</div>
           <TextField
             variant="outlined"
             fullWidth
@@ -168,6 +171,7 @@ function StudentLogin() {
             onChange={handleChange}
             error={!!error.enrollment}
             helperText={error.enrollment}
+            disabled={!!loginData.common}
           />
           <TextField
             onFocus={onFocus}

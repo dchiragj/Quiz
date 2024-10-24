@@ -7,40 +7,19 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
+import MockTestQuestionItem from "./MockTestQuestionItem";
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
   const { mockTestData } = useContext(AuthContext);
-  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  let [selectedAnswers, setSelectedAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  const handleOptionSelect = (id, optionKey) => {
-    setSelectedAnswers((prevAnswers) => {
-      const existingIndex = prevAnswers.findIndex(
-        (answer) => answer.questionId === id
-      );
-      if (existingIndex !== -1) {
-        const updatedAnswers = [...prevAnswers];
-        updatedAnswers[existingIndex].selectedAnswer = optionKey;
-        return updatedAnswers;
-      } else {
-        return [
-          ...prevAnswers,
-          {
-            questionId: id,
-            selectedAnswer: optionKey,
-          },
-        ];
-      }
-    });
-  };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < mockTestData.data.length - 1) {
@@ -57,9 +36,11 @@ const MockTestPlay = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      await SaveQuizAnswer(selectedAnswers);
-      const response = await GetQuizResult();
+    try {  
+      let answers = selectedAnswers?.map((x) => ({questionId: x.questionId, selectedAnswer: x.selectedAnswer?.answerKey}))
+    
+      await SaveQuizAnswer(answers);
+      const response = await GetQuizResult();  
       setIsResultModel(true);
       setResult(response.data);
     } catch (error) {
@@ -71,6 +52,24 @@ const MockTestPlay = () => {
     navigate("/mocktest");
     // localStorage.clear();
   };
+
+  const onAnswerSelect = (args) => {
+    if(!args) return;
+
+    let { questionId, answerKey, answerVal } = args;
+    let existingAnswerIndex = selectedAnswers.findIndex((x) => x.questionId === questionId)
+    if (existingAnswerIndex !== -1) {
+      selectedAnswers[existingAnswerIndex].selectedAnswer =  { answerKey, answerVal }
+    } else {
+      const answer = {
+        questionId,
+        selectedAnswer: { answerKey, answerVal }
+      }
+      selectedAnswers = [...selectedAnswers, answer]
+    }
+    setSelectedAnswers(selectedAnswers)
+    handleNextQuestion()
+  }
 
   return (
     <div
@@ -116,136 +115,27 @@ const MockTestPlay = () => {
             }}
           >
             <Box variant="body1" sx={{ textAlign: "left", marginBottom: 3 }}>
-              {(() => {
-                const currentQuestion = mockTestData.data[currentQuestionIndex];
-                const imgMatch = currentQuestion.qText.match(/\(#(\d+)img\)/);
-                const imgSrc = imgMatch
-                  ? require(`../assets/imgs/${imgMatch[1]}img.png`)
-                  : null;
-                const splitedData =
-                  currentQuestion.qText.split(/\s*\(#\d+img\)\s*/);
+              {mockTestData.data.map((currentQuestion, index) => {
+                if (currentQuestionIndex === index)
                 return (
-                  <>
-                    {/* {currentQuestionIndex + 1}.{splitedData[0]}
-                    {imgSrc && (
-                      <Box
-                        sx={{
-                          margin: "10px 0",
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <img
-                          src={imgSrc}
-                          alt={`${imgMatch[1]}img`}
-                          style={{
-                            maxwidth: "100%",
-                            maxheight: "200px",
-                            height: "auto",
-                          }}
-                        />
-                      </Box>
-                    )}
-                    {splitedData[1]} */}
-                    {currentQuestionIndex + 1}.{splitedData[0]}
-                    {imgSrc && (
-                      <Box
-                        sx={{
-                          margin: "10px 0",
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <img
-                          src={imgSrc}
-                          alt={`${imgMatch[1]}img`}
-                          style={{
-                            maxWidth: "100%",
-                            maxHeight: "200px",
-                            height: "auto",
-                          }}
-                        />
-                      </Box>
-                    )}
-                    {splitedData[1]}
-                  </>
-                );
-              })()}
+                  <React.Fragment key={currentQuestion.questionId}>
+                    <MockTestQuestionItem currentQuestion={currentQuestion} currentQuestionIndex={index} onAnswerSelect={onAnswerSelect} selectedAnswers={selectedAnswers} />
+                  </React.Fragment>
+                )
+              })
+              }
             </Box>
 
-            <Grid container spacing={2}>
-              {Object.entries(
-                mockTestData.data[currentQuestionIndex].options
-              ).map(([key, value]) => (
-                <Grid item xs={12} key={key}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    sx={{
-                      color:
-                        selectedAnswers.find(
-                          (answer) =>
-                            answer.questionId ===
-                            mockTestData.data[currentQuestionIndex].questionId
-                        )?.selectedAnswer === key
-                          ? "white"
-                          : "black",
-                      borderColor: "#1A73E8",
-                      borderRadius: 2,
-                      backgroundColor:
-                        selectedAnswers.find(
-                          (answer) =>
-                            answer.questionId ===
-                            mockTestData.data[currentQuestionIndex].questionId
-                        )?.selectedAnswer === key
-                          ? "#1A73E8"
-                          : "transparent",
-                      "&:hover": {
-                        backgroundColor: "#1A73E8",
-                        color: "white",
-                      },
-                      ":active": {
-                        backgroundColor: "#1A73E8",
-                        color: "white",
-                      },
-                    }}
-                    onClick={() =>
-                      handleOptionSelect(
-                        mockTestData.data[currentQuestionIndex].questionId,
-                        key
-                      )
-                    }
-                  >
-                    {value.includes("#") ? (
-                      <img
-                        src={require(`../assets/imgs/${value.replace(
-                          "#",
-                          ""
-                        )}.png`)}
-                        alt={value}
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    ) : (
-                      value
-                    )}
-                  </Button>
-                </Grid>
-              ))}
-            </Grid>
           </Box>
         )}
       </Box>
 
       <div className="my-2 d-flex justify-content-center">
-        {currentQuestionIndex < mockTestData?.data?.length - 1 && (
+        {/* {currentQuestionIndex < mockTestData?.data?.length - 1 && (
           <Button onClick={handleNextQuestion} variant="contained">
             Next
           </Button>
-        )}
+        )} */}
         {currentQuestionIndex === mockTestData?.data?.length - 1 && (
           <Button
             onClick={handleSubmit}
