@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 function ExamInstructions() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function ExamInstructions() {
               sx={{ mr: 2 }}
               onClick={() => navigate("/studentdetails")}
             >
-              <ArrowBackIcon fontSize="large" style={{ color: "#000000" }} />
+              <IoMdArrowRoundBack color="#000000" />
             </IconButton>
             <Typography sx={{ color: "#FFFFFF" }}>
               General Instructions

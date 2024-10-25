@@ -11,24 +11,44 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import navbarlogo from "../assets/studentlogin.png";
-import { FaRegUserCircle } from "react-icons/fa";
-import user from "../assets/user-image.jpg";
-import document from "../assets/document.jpg";
+import { CiLogout } from "react-icons/ci";
 import { Col, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { GetUserDetails } from "../common/getdata";
+// import navbarlogo from "../assets/studentlogin.png";
+// import { FaRegUserCircle } from "react-icons/fa";
+// import user from "../assets/user-image.jpg";
+// import document from "../assets/document.jpg";
+// import { AuthContext } from "./context/AuthContext";
 
 function StudentDetails() {
   const navigate = useNavigate();
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
   const [isChecked, setIsChecked] = useState(false);
+  const [ProfileDetails, setProfileDetails] = useState();
 
   const handleCheck = () => {
     setIsChecked(!isChecked);
   };
+  useEffect(() => {
+    GetprofileDetails()
+  }, [])
+  const GetprofileDetails = async () => {
+    try {
+      const response = await GetUserDetails();
+      setProfileDetails(response.data.data);
+      if (response.data.status) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error-->", error);
+    }
+  }
 
   return (
     <div>
@@ -43,23 +63,26 @@ function StudentDetails() {
               sx={{ mr: 2 }}
               onClick={() => navigate("/studentlogin")}
             >
-              <ArrowBackIcon fontSize="large" style={{ color: "#000000" }} />
+              <CiLogout  fontSize="30px" style={{ color: "#000000"  }} />
             </IconButton>
-            <div className="d-flex justify-content-between align-items-center gap-4">
-              <a className="navbar-brand" href="#">
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Student Details
+              </Typography>
+            {/* <div className="d-flex justify-content-between align-items-center gap-4"> */}
+              {/* <a className="navbar-brand" href="#">
                 <img src={navbarlogo} alt="Kamp Logo" width="75" height="50" />
-              </a>
-              <Typography sx={{ color: "#FFFFFF" }}>National</Typography>
+              </a> */}
+              {/* <Typography sx={{ color: "#FFFFFF" }}>National</Typography> */}
 
               {/* Navbar Links */}
 
-              <a
+              {/* <a
                 className="nav-link d-flex justify-content-center align-items-center"
                 style={{ color: "#FFFFFF" }}
               >
                 <FaRegUserCircle /> NASTA 2023
-              </a>
-            </div>
+              </a> */}
+            {/* </div> */}
           </Toolbar>
         </AppBar>
       </Box>
@@ -81,62 +104,62 @@ function StudentDetails() {
                         <td className="">
                           <strong>Student Name: </strong>
                         </td>
-                        <td>{studentData.userName}</td>
+                        <td>{ProfileDetails?.userName}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Father's Name: </strong>
                         </td>
-                        <td>{studentData.fatherName}</td>
+                        <td>{ProfileDetails?.fatherName}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Enrollment No: </strong>
                         </td>
-                        <td>{studentData.enrollMent}</td>
+                        <td>{ProfileDetails?.enrollMent}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Class: </strong>
                         </td>
-                        <td>{studentData.class}</td>
+                        <td>{ProfileDetails?.class}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>D.O.B: </strong>{" "}
                         </td>
-                        <td>{studentData.dateofBirth}</td>
+                        <td>{ProfileDetails?.dateofBirth}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Mobile Number: </strong>
                         </td>
-                        <td>{studentData.mobile}</td>
+                        <td>{ProfileDetails?.mobile}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Gender: </strong>
                         </td>
-                        <td>{studentData.gender}</td>
+                        <td>{ProfileDetails?.gender}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>Email ID: </strong>
                         </td>
-                        <td>{studentData.emailId}</td>
+                        <td>{ProfileDetails?.emailId}</td>
                       </tr>
                       <tr>
                         <td>
                           <strong>School Name: </strong>
                         </td>
-                        <td>{studentData.schoolName}</td>
+                        <td>{ProfileDetails?.schoolName}</td>
                       </tr>
                     </tbody>
                   </table>
                   <div className="container">
                     <div className="row  ">
-                      <img src={user} alt="Student" className="w-25 col" />
-                      <img src={document} alt="Document" className="w-25 col" />
+                      <img src={ProfileDetails?.userImage} alt="Student" className="w-25 col" />
+                      <img src={ProfileDetails?.userIdentityCard} alt="Document" className="w-25 col" />
                     </div>
                   </div>
                   {/* Declaration Checkbox */}

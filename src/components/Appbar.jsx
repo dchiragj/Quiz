@@ -9,6 +9,7 @@ import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
+import { IoMdArrowRoundBack } from 'react-icons/io';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -64,9 +65,9 @@ const SearchAppBar = () => {
                         color="inherit"
                         aria-label="open drawer"
                         sx={{ mr: 2 }}
-                        onClick={() => navigate('/login')}
+                        onClick={() => navigate('/examintroduction')}
                     >
-                        <MenuIcon />
+                        <IoMdArrowRoundBack color="#000000" />
                     </IconButton>
                     <Typography
                         variant="h6"

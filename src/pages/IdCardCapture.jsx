@@ -43,9 +43,10 @@ const IDCardCapture = () => {
     alert(`image:${image}`)
     setImageSrc(image); // Sets the captured image
     // Simulate checks for the card (cut, blur, and rotation)
-    const isCut = checkIfImageCut(imageSrc);
-    const isBlurred = checkIfImageBlurred(imageSrc);
-    const isRotated = checkIfImageRotated(imageSrc);
+    const isCut = await checkIfImageCut(image);
+    const isBlurred = await checkIfImageBlurred(image);
+    const isRotated = await checkIfImageRotated(image);
+    
     alert(`isCut:${isCut}`)
     alert(`isBlurred:${isBlurred}`)
     alert(`isRotated:${isRotated}`)
@@ -67,12 +68,12 @@ const IDCardCapture = () => {
   };
   // Check if the card is cut (dimensions smaller than expected)
   const checkIfImageCut = (imgSrc) => {
-    alert("cut")
+    // alert("cut")
     return new Promise((resolve) => {
       const img = new Image();
       img.src = imgSrc;
       img.onload = function () {
-        console.log(`Image Dimensions: ${img.width}x${img.height}`); // Log dimensions
+       alert(`Image Dimensions: ${img.width}x${img.height}`); // Log dimensions
         const isCut = img.width < 300 || img.height < 200; // Example dimensions
         resolve(isCut);
       };
@@ -81,7 +82,7 @@ const IDCardCapture = () => {
 
   // Check if the card is blurred (simple sharpness analysis)
   const checkIfImageBlurred = (imgSrc) => {
-    alert("checkIfImageBlurred")
+    // alert("checkIfImageBlurred")
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -104,7 +105,7 @@ const IDCardCapture = () => {
         }
 
         const avgBrightness = sum / (imgData.length / 4);
-        console.log(`Average Brightness: ${avgBrightness}`); // Log brightness
+        alert(`Average Brightness: ${avgBrightness}`); // Log brightness
         resolve(avgBrightness < 50); // A very simple way to detect blur
       };
     });
@@ -113,14 +114,14 @@ const IDCardCapture = () => {
 
   // Check if the card is rotated (based on dimensions or aspect ratio)
   const checkIfImageRotated = (imgSrc) => {
-    alert("checkIfImageRotated")
+    // alert("checkIfImageRotated")
     return new Promise((resolve) => {
       const img = new Image();
       img.src = imgSrc;
       img.onload = function () {
         const aspectRatio = img.width / img.height;
         const expectedAspectRatio = 1.5; // Example ratio for an ID card
-        console.log(`Aspect Ratio: ${aspectRatio}`); // Log aspect ratio
+        alert(`Aspect Ratio: ${aspectRatio}`); // Log aspect ratio
         resolve(Math.abs(aspectRatio - expectedAspectRatio) > 0.1);
       };
     });
@@ -199,7 +200,7 @@ const IDCardCapture = () => {
                 <img
                   src={imageSrc}
                   alt="Captured"
-                  style={{ borderRadius: '10px', width: '320px', height: '320px', border: '5px solid white' }}
+                  style={{ borderRadius: '10px', width: '350px', height: '350px', border: '5px solid white' }}
                 />
               )}
 
@@ -262,3 +263,45 @@ const IDCardCapture = () => {
 };
 
 export default IDCardCapture;
+
+// import React, { useState } from "react";
+// import FaceCamera from "./FaceCamera";
+// import FaceUi from "./FaceUi";
+
+
+// const IDCardCapture = ({ onPhotoTaken, onError, onBackClick }) => {
+//   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+//   const handlePhotoTaken = (imageData, content) => {
+//     setIsButtonDisabled(false);
+//     onPhotoTaken(imageData, content);
+//   };
+
+//   const handleContinueDetection = () => {
+//     setIsButtonDisabled(true);
+//     // Logic to continue detection
+//   };
+
+//   return (
+//     <>
+//       <h2>Face auto capture</h2>
+//       <div>
+//         <button onClick={handleContinueDetection} disabled={isButtonDisabled}>
+//           Continue detection
+//         </button>
+//         <button onClick={onBackClick}>Back</button>
+//       </div>
+//       <div>
+//         <FaceCamera
+//           cameraFacing="user" // Ensure to provide the required props
+//           onPhotoTaken={handlePhotoTaken}
+//           onError={onError}
+//         />
+//         <FaceUi showCameraButtons />
+//       </div>
+//     </>
+//   );
+// };
+
+// export default IDCardCapture;
+

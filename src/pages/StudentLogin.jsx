@@ -26,29 +26,42 @@ function StudentLogin() {
   const [loginData, setLoginData] = useState({
     common: "",
     enrollment: "",
-    dateOfBirth: "",
+    dateOfBirth: "" ,
   });
+ 
   const [focus, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const [error, setError] = useState({
     common: "",
     enrollment: "",
-    dateOfBirth: "",
+    dateOfBirth: null,
   });
   const onFocus = () => setFocused(true);
   const onBlur = () => setFocused(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
-      [name]: value,
+    setLoginData((prevData) => {
+      const newData = {
+        ...prevData,
+        [name]: value,
+      };
+
+      // Check if common has a value; if so, set dateOfBirth to null
+      if (name === "common" && value) {
+        newData.dateOfBirth = null; // Set dateOfBirth to null if common has value
+      }
+      return newData;
     });
-    if (e.target.name == "dateOfBirth" && e.target.value) {
+
+    // Handle dateOfBirth specific value check
+    if (e.target.name === "dateOfBirth" && e.target.value) {
       setHasValue(true);
     } else {
       setHasValue(false);
     }
+
+    // Reset error messages
     setError((prevError) => ({
       ...prevError,
       [name]: "",
@@ -67,7 +80,7 @@ function StudentLogin() {
     //   newError.enrollment = "Enrollment number is required";
     //   valid = false;
     // }
-    if (!loginData.dateOfBirth) {
+    if (!loginData.dateOfBirth && loginData.enrollment) {
       newError.dateOfBirth = "Date of Birth is required";
       valid = false;
     }
@@ -86,6 +99,7 @@ function StudentLogin() {
         return;
     }
     try {
+
       const response = await StudentGenerateOTP(loginData);
       setAuthData(response.data);
       // alert(`2 - ${JSON.stringify(response.data)}`)
@@ -185,7 +199,7 @@ function StudentLogin() {
             margin="normal"
             label="DATE OF BIRTH"
             name="dateOfBirth"
-            value={loginData.dateOfBirth}
+            value={loginData.dateOfBirth }
             onChange={(e) => handleChange(e)}
             error={!!error.dateOfBirth}
             helperText={error.dateOfBirth}

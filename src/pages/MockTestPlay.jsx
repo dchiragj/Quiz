@@ -7,11 +7,12 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
 import MockTestQuestionItem from "./MockTestQuestionItem";
+import { FaPlus } from "react-icons/fa";
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
@@ -55,7 +56,6 @@ const MockTestPlay = () => {
 
   const onAnswerSelect = (args) => {
     if(!args) return;
-
     let { questionId, answerKey, answerVal } = args;
     let existingAnswerIndex = selectedAnswers.findIndex((x) => x.questionId === questionId)
     if (existingAnswerIndex !== -1) {
@@ -125,9 +125,9 @@ const MockTestPlay = () => {
               })
               }
             </Box>
-
           </Box>
         )}
+        {/* <h1>test</h1> */}
       </Box>
 
       <div className="my-2 d-flex justify-content-center">
@@ -146,7 +146,7 @@ const MockTestPlay = () => {
           </Button>
         )}
       </div>
-
+      {/* <h1>test</h1> */}
       {isResultModel && (
         <Box
           sx={{
@@ -211,6 +211,23 @@ const MockTestPlay = () => {
           </div>
         </div>
       </div>
+      {/* <div className="content__footer">
+          <div className="sendNewMessage">
+            <button className="addFiles">
+            <FaPlus color="#6c84ff" style={{backgroundColor:'white'}}/>
+            </button>
+            <input
+              type="text"
+              placeholder="Type a message here"
+              // onChange={this.onStateChange}
+              // value={this.state.msg}
+              style={{flexGrow:'1',padding:'0 15px',backgroundColor:'transparent',border:'none', outline:''}}
+            />
+            <button className="btnSendMsg" id="sendMsgBtn">
+              <i><IoIosSend /></i>
+            </button>
+          </div>
+        </div> */}
     </div>
   );
 };
