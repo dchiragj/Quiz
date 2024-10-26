@@ -1,47 +1,45 @@
 import React, { useContext, useState } from "react";
-import {
-  AppBar,
-  Box,
-  Button,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
+import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
-import MockTestQuestionItem from "./MockTestQuestionItem";
-import { FaPlus } from "react-icons/fa";
+import { div } from "@tensorflow/tfjs";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
   const { mockTestData } = useContext(AuthContext);
-  let [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [chatHistory, setChatHistory] = useState([]);
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < mockTestData.data.length - 1) {
+  const handleNextQuestion = (answerObj) => {
+    setChatHistory((prev) => [
+      ...prev,
+      { type: "bot", content: `${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}` },
+      { type: "user", content: answerObj.answerVal },
+    ]);
+    
+    if (currentQuestionIndex < mockTestData.data.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
     } else {
-      navigate("/mocktest");
+    setChatHistory((prev) => [
+      ...prev,
+      { type: "bot", content: 'Submit' },
+    ]);
     }
   };
 
   const handleSubmit = async () => {
-    try {  
-      let answers = selectedAnswers?.map((x) => ({questionId: x.questionId, selectedAnswer: x.selectedAnswer?.answerKey}))
-    
+    try {
+      const answers = selectedAnswers.map((x) => ({
+        questionId: x.questionId,
+        selectedAnswer: x.selectedAnswer?.answerKey,
+      }));
       await SaveQuizAnswer(answers);
-      const response = await GetQuizResult();  
+      const response = await GetQuizResult();
       setIsResultModel(true);
       setResult(response.data);
     } catch (error) {
@@ -49,41 +47,80 @@ const MockTestPlay = () => {
     }
   };
 
-  const saveAndExit = () => {
-    navigate("/mocktest");
-    // localStorage.clear();
+  const onAnswerSelect = (questionId, answerKey, answerVal) => {
+    setSelectedAnswers((prev) => [
+      ...prev,
+      { questionId, selectedAnswer: { answerKey, answerVal } },
+    ]);
+    handleNextQuestion({ answerKey, answerVal });
+  };
+  const saveAndExit = () =>{
+    navigate("/mocktest")
+  }
+  
+  // Function to parse the question text and embed images
+  const renderQuestionWithImages = (text, type) => {
+
+    const imgMatch = text.match(/\(#(\d+)img\)/);
+    const imgSrc = imgMatch
+      ? require(`../assets/imgs/${imgMatch[1]}img.png`)
+      : null;
+    const splitedData =
+      text.split(/\s*\(#\d+img\)\s*/);
+    if (type === 'bot') {
+      return (
+        <>
+          {splitedData[0]}
+          {imgSrc && (
+            <Box
+              sx={{
+                margin: "10px 0",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src={imgSrc}
+                alt={`${imgMatch[1]}img`}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "200px",
+                  height: "auto",
+                }}
+              />
+            </Box>
+          )}
+          {splitedData[1]}
+        </>
+      )
+    } else if (type === 'user') {
+      return (
+        <>
+          {text.includes("#") ? (
+            <img
+              src={require(`../assets/imgs/${text.replace(
+                "#",
+                ""
+              )}.png`)}
+              alt={text}
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "contain",
+              }}
+            />
+          ) : (
+            text
+          )}
+        </>
+      )
+    }
+
   };
 
-  const onAnswerSelect = (args) => {
-    if(!args) return;
-    let { questionId, answerKey, answerVal } = args;
-    let existingAnswerIndex = selectedAnswers.findIndex((x) => x.questionId === questionId)
-    if (existingAnswerIndex !== -1) {
-      selectedAnswers[existingAnswerIndex].selectedAnswer =  { answerKey, answerVal }
-    } else {
-      const answer = {
-        questionId,
-        selectedAnswer: { answerKey, answerVal }
-      }
-      selectedAnswers = [...selectedAnswers, answer]
-    }
-    setSelectedAnswers(selectedAnswers)
-    handleNextQuestion()
-  }
-
   return (
-    <div
-      maxwidth="sm"
-      sx={{
-        backgroundColor: "",
-        height: "100vh",
-        color: "white",
-        padding: 2,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box className="w-100">
+    <div>
+     <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -92,7 +129,7 @@ const MockTestPlay = () => {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              onClick={handlePreviousQuestion}
+              onClick={saveAndExit}
             >
               <IoMdArrowRoundBack color="#000000" />
             </IconButton>
@@ -102,51 +139,75 @@ const MockTestPlay = () => {
             </Typography>
           </Toolbar>
         </AppBar>
-      </Box>
-
-      <Box sx={{ flexGrow: 1, overflowY: "auto", paddingBottom: 2 }}>
-        {mockTestData?.data?.length > 0 && (
-          <Box
+      </Box>  
+    <Box
+      sx={{
+        // height: "100vh",
+        padding: 2,
+        display: "flex",
+        flexDirection: "column",
+          justifyContent: "end",
+      }}
+    >
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {chatHistory.map((msg, index) => (
+          <Paper
+            key={index}
             sx={{
-              color: "#000000",
               padding: 2,
-              borderRadius: 2,
-              marginBottom: 3,
+              backgroundColor: msg.type === "bot" ? "#e0f7fa" : "#c8e6c9",
+              alignSelf: msg.type === "bot" ? "flex-start" : "flex-end",
+              maxWidth: "80%",
             }}
           >
-            <Box variant="body1" sx={{ textAlign: "left", marginBottom: 3 }}>
-              {mockTestData.data.map((currentQuestion, index) => {
-                if (currentQuestionIndex === index)
-                return (
-                  <React.Fragment key={currentQuestion.questionId}>
-                    <MockTestQuestionItem currentQuestion={currentQuestion} currentQuestionIndex={index} onAnswerSelect={onAnswerSelect} selectedAnswers={selectedAnswers} />
-                  </React.Fragment>
-                )
-              })
-              }
-            </Box>
+            <Typography variant="body1">{renderQuestionWithImages(msg.content, msg.type)}</Typography>
+          </Paper>
+        ))}
+        {mockTestData?.data?.length > currentQuestionIndex && (
+          <Box sx={{ marginBottom: 3 }}>
+            <Typography variant="body1">
+            {renderQuestionWithImages(`${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, "bot")}
+            </Typography>
+            {Object.entries(mockTestData.data[currentQuestionIndex]?.options).map(([key, value], idx) => (
+            // {mockTestData.data[currentQuestionIndex]?.options?.map((option, idx) => (
+              <Button
+                key={idx}
+                onClick={() =>
+                  onAnswerSelect(
+                    mockTestData.data[currentQuestionIndex].questionId,
+                    key,
+                    value
+                  )
+                }
+                sx={{
+                  display: "block",
+                  marginTop: 1,
+                  textAlign: "left",
+                  backgroundColor: "#f5f5f5",
+                  width: "100%",
+                }}
+              >
+                {renderQuestionWithImages(value, 'user')}
+              </Button>
+            ))}
           </Box>
         )}
-        {/* <h1>test</h1> */}
+        {mockTestData?.data?.length === currentQuestionIndex && (
+          <Button 
+          variant="contained"
+          color="primary" onClick={handleSubmit}>Submit</Button>
+        )}
       </Box>
 
-      <div className="my-2 d-flex justify-content-center">
-        {/* {currentQuestionIndex < mockTestData?.data?.length - 1 && (
-          <Button onClick={handleNextQuestion} variant="contained">
-            Next
-          </Button>
-        )} */}
-        {currentQuestionIndex === mockTestData?.data?.length - 1 && (
-          <Button
-            onClick={handleSubmit}
-            disabled={selectedAnswers.length < mockTestData?.data?.length}
-            variant="contained"
-          >
-            Submit
-          </Button>
-        )}
-      </div>
-      {/* <h1>test</h1> */}
       {isResultModel && (
         <Box
           sx={{
@@ -157,77 +218,44 @@ const MockTestPlay = () => {
             bottom: 0,
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
+        >
+          <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2 }}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Quiz Result
+            </Typography>
+            <Typography>Total: {result?.data?.totalQuestion}</Typography>
+            <Typography>Correct: {result?.data?.correctQuestion}</Typography>
+            <Typography>Percentage: {result?.data?.percentage}</Typography>
+            <Button
+              onClick={() => {
+                setIsResultModel(false);
+                // navigate("/mocktest");
+              }}
+              variant="outlined"
+              color="primary"
+              sx={{ mt: 2, mr: 2 }}
+            >
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                setIsResultModel(false);
+                navigate("/mocktest");
+              }}
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+            >
+              Save & Exit
+            </Button>
+          </Box>
+        </Box>
       )}
-      {/* Result modal */}
-      <div
-        className={`modal fade ${isResultModel && "show"} `}
-        style={{ display: isResultModel ? "block" : "none", zIndex: 1050 }}
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalCenterTitle"
-        aria-hidden={!isResultModel}
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5
-                className="modal-title text-black"
-                id="exampleModalCenterTitle"
-              >
-                Quiz Result
-              </h5>
-              <button
-                type="button"
-                className="close"
-                aria-label="Close"
-                onClick={() => setIsResultModel(false)}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="text-black p-3">
-              <p>Total : {result?.data?.totalQuestion}</p>
-              <p>Correct : {result?.data?.correctQuestion}</p>
-              <h3>Percentage : {result?.data?.percentage}</h3>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setIsResultModel(false)}
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={saveAndExit}
-              >
-                Save&Exit
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* <div className="content__footer">
-          <div className="sendNewMessage">
-            <button className="addFiles">
-            <FaPlus color="#6c84ff" style={{backgroundColor:'white'}}/>
-            </button>
-            <input
-              type="text"
-              placeholder="Type a message here"
-              // onChange={this.onStateChange}
-              // value={this.state.msg}
-              style={{flexGrow:'1',padding:'0 15px',backgroundColor:'transparent',border:'none', outline:''}}
-            />
-            <button className="btnSendMsg" id="sendMsgBtn">
-              <i><IoIosSend /></i>
-            </button>
-          </div>
-        </div> */}
+    </Box>
     </div>
   );
 };

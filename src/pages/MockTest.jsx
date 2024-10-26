@@ -20,10 +20,13 @@ import "react-toastify/dist/ReactToastify.css";
 const MockTest = () => {
   const navigate = useNavigate();
   const { setMockTestData } = useContext(AuthContext);
+  const parameters = {
+    Flag: 'Created',
+  };
 
   const handleMockTestPlayButton = async () => {
     try {
-      const response = await QuizQuestionsList();
+      const response = await QuizQuestionsList(parameters);
       setMockTestData(response.data);
       if (response.data.status) {
         toast.success(response.data.message); 

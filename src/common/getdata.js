@@ -24,8 +24,8 @@ export const StudentLoginWithOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/Auth/LoginWithOTP`, values);
 };
 
-export const QuizQuestionsList = () => {
-	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzQuestionList`, { headers: authHeader() })
+export const QuizQuestionsList = (values) => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzQuestionList`, {params: values, headers: authHeader() })
 }
 
 export const SaveQuizAnswer = (values) => {
