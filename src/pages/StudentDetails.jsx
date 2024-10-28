@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CiLogout } from "react-icons/ci";
+import { IoMdMenu } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { GetUserDetails } from "../common/getdata";
@@ -23,13 +23,17 @@ import { GetUserDetails } from "../common/getdata";
 // import document from "../assets/document.jpg";
 // import { AuthContext } from "./context/AuthContext";
 
-function StudentDetails() {
+function StudentDetails({isOpen,setIsOpen,setUser}) {
   const navigate = useNavigate();
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
   const [isChecked, setIsChecked] = useState(false);
   const [ProfileDetails, setProfileDetails] = useState();
 
+
+  // const toggleDrawer = (open) => () => {
+  //   setIsOpen(open);
+  // };
   const handleCheck = () => {
     setIsChecked(!isChecked);
   };
@@ -40,8 +44,9 @@ function StudentDetails() {
     try {
       const response = await GetUserDetails();
       setProfileDetails(response.data.data);
+      setUser(response.data.data)
       if (response.data.status) {
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -61,9 +66,9 @@ function StudentDetails() {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              onClick={() => navigate("/studentlogin")}
+              onClick={() => setIsOpen(!isOpen) }
             >
-              <CiLogout  fontSize="30px" style={{ color: "#000000"  }} />
+              <IoMdMenu   fontSize="30px" style={{ color: "#000000"  }} />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Student Details
@@ -87,8 +92,8 @@ function StudentDetails() {
         </AppBar>
       </Box>
       <div>
-        {studentData ? (
-          // <Box sx={{ maxWidth: '900px', margin: 'auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+     
+          {/* // <Box sx={{ maxWidth: '900px', margin: 'auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}> */}
           <Grid className="m-2">
             {/* Student Details Section */}
             <Grid item xs={12}>
@@ -192,10 +197,7 @@ function StudentDetails() {
               </Card>
             </Grid>
           </Grid>
-        ) : (
-          // </Box>
-          <p>No data available.</p>
-        )}
+        
       </div>
     </div>
   );

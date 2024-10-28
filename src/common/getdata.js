@@ -42,3 +42,7 @@ export const UploadUserImage = (values) => {
 export const GetUserDetails = () => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/GetUserDetails`,{}, { headers: authHeader() });
 };
+export const ResendOTP = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/ResendOTP`,values);
+};
+

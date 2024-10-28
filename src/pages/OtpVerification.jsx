@@ -10,15 +10,18 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
-import { StudentLoginWithOTP } from "../common/getdata";
+import { ResendOTP, StudentLoginWithOTP } from "../common/getdata";
 import { RiVerifiedBadgeLine } from "react-icons/ri";
 import Toolbar from "@mui/material/Toolbar";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function OtpVerification() {
+  const location = useLocation();
+
+  const loginData = location.state?.loginData;
   const { authData } = useContext(AuthContext);
   const navigate = useNavigate();
   const [otpNum, setOtpNum] = useState(new Array(6).fill(""));
@@ -58,6 +61,24 @@ function OtpVerification() {
         navigate("/studentdetails", {
           state: { studentData: response.data.data },
         });
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error-->", error);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    try {
+      const response = await ResendOTP(loginData);
+      localStorage.setItem("user", JSON.stringify(response.data.data));
+
+      if (response.data.status) {
+        // navigate("/studentdetails", {
+        //   state: { studentData: response.data.data },
+        // });
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -142,7 +163,7 @@ function OtpVerification() {
             Haven't received OTP?{" "}
             <span
               style={{ color: "#4A4AFF", cursor: "pointer" }}
-              onClick={handleSubmit}
+              onClick={handleResendOTP}
             >
               Resend
             </span>

@@ -14,12 +14,19 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FaceCapture from './pages/FaceCapture';
 import IdCardCapture from './pages/IdCardCapture';
+import { useState } from 'react';
+import Sidebar from './pages/Offcanvas';
 
 
 
 function App() {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState({});
   return (
     <>
+    <AuthProvider>
+    <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}  user={user}/>
       <Routes >
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
@@ -28,11 +35,12 @@ function App() {
         <Route path="/mocktest" element={<AuthProvider><MockTest /></AuthProvider>} />
         <Route path="/mocktestplay" element={<AuthProvider><MockTestPlay /></AuthProvider>} />
         <Route path="/mocktestsecond" element={<MockTestSecond />} />
-        <Route path="/studentdetails" element={<AuthProvider><StudentDetails /></AuthProvider>} />
+        <Route path="/studentdetails" element={<AuthProvider><StudentDetails isOpen={isOpen} setIsOpen={setIsOpen}  user={user} setUser={setUser}/></AuthProvider>} />
         <Route path="/examintroduction" element={<ExamInstructions />} />
         <Route path="/facecapture" element={<FaceCapture />} />
         <Route path="/idcard" element={<AuthProvider><IdCardCapture /></AuthProvider>} />
       </Routes>
+    </AuthProvider>
       <ToastContainer
         position="top-left"
         autoClose={3000}

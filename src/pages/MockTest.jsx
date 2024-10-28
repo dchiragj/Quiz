@@ -75,6 +75,7 @@ const MockTest = () => {
               sx={{ backgroundColor: "#333", borderRadius: "4px" }}
             >
               <ListItemText
+              onClick={handleMockTestPlayButton}
                 primary="Mock Test"
                 sx={{
                   color: "#fff",

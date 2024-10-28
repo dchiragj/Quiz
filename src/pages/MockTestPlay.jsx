@@ -1,25 +1,40 @@
-import React, { useContext, useState } from "react";
-import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton } from "@mui/material";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton, FormControlLabel, Checkbox } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
 import { div } from "@tensorflow/tfjs";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { Col, Row } from "react-bootstrap";
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
+  const optionLabels = ['A', 'B', 'C', 'D'];
   const { mockTestData } = useContext(AuthContext);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [chatHistory, setChatHistory] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the latest message
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
+  const getCurrentTime = () => {
+    return new Date().toLocaleTimeString([],{ hour: '2-digit', minute: '2-digit' });
+  };
+  const handleCheck = () => {
+    setIsChecked(!isChecked);
+  };
 
   const handleNextQuestion = (answerObj) => {
     setChatHistory((prev) => [
       ...prev,
-      { type: "bot", content: `${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}` },
-      { type: "user", content: answerObj.answerVal },
+      { type: "bot", content: `${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, time: getCurrentTime() },
+      { type: "user", content: answerObj.answerVal,time: getCurrentTime() },
     ]);
     
     if (currentQuestionIndex < mockTestData.data.length) {
@@ -149,6 +164,33 @@ const MockTestPlay = () => {
           justifyContent: "end",
       }}
     >
+     <Box
+      sx={{
+        backgroundColor: "#f5f5f5",
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
+        padding: "16px",
+        margin: "16px 0",
+        textAlign: "center",
+        maxWidth: "600px",
+        mx: "auto", // centers horizontally
+      }}
+    >
+      <Typography
+        variant="body1"
+        component="p"
+        sx={{ color: "black", fontWeight: "bold" }}
+      >
+        सभी सवालों के चार विकल्प हैं | सही उत्तर को इंगित करने के लिए एक बॉक्स का चयन करें |
+      </Typography>
+      <Typography
+        variant="body1"
+        component="p"
+        sx={{ color: "black", fontWeight: "bold", mt: 1 }}
+      >
+        All questions are followed by four options. Select one box to indicate the correct answer.
+      </Typography>
+    </Box>
       <Box
         sx={{
           flexGrow: 1,
@@ -157,6 +199,7 @@ const MockTestPlay = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          
         }}
       >
         {chatHistory.map((msg, index) => (
@@ -170,8 +213,12 @@ const MockTestPlay = () => {
             }}
           >
             <Typography variant="body1">{renderQuestionWithImages(msg.content, msg.type)}</Typography>
+            <Typography variant="caption" sx={{ display: "block", textAlign: "right" }}>
+                {msg.time}
+              </Typography>
           </Paper>
         ))}
+         <div ref={chatEndRef} />
         {mockTestData?.data?.length > currentQuestionIndex && (
           <Box sx={{ marginBottom: 3 }}>
             <Typography variant="body1">
@@ -196,11 +243,12 @@ const MockTestPlay = () => {
                   width: "100%",
                 }}
               >
-                {renderQuestionWithImages(value, 'user')}
+                 {`${optionLabels[idx]}). `}{renderQuestionWithImages(value, 'user')}
               </Button>
             ))}
           </Box>
         )}
+       
         {mockTestData?.data?.length === currentQuestionIndex && (
           <Button 
           variant="contained"
@@ -224,12 +272,39 @@ const MockTestPlay = () => {
           }}
         >
           <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2 }}>
-            <Typography variant="h6" color="primary" gutterBottom>
-              Quiz Result
+            <Typography variant="h6"  gutterBottom className="border-bottom">
+            Your Assessment Summary
             </Typography>
-            <Typography>Total: {result?.data?.totalQuestion}</Typography>
+
+            <div className="d-flex justify-content-start align-items-center">
+              <div style={{color:"#1976d2"}}>Total:</div>
+              <div>{result?.data?.totalQuestion}</div>
+            </div>
+            <div className="d-flex justify-content-start align-items-center">
+              <div style={{color:"#1976d2"}}>Correct:</div>
+              <div>{result?.data?.correctQuestion}</div>
+            </div>
+            <div className="d-flex justify-content-start align-items-center border-bottom">
+              <div style={{color:"#1976d2"}}>Percentage:</div>
+              <div>{result?.data?.percentage}</div>
+            </div>
+            {/* <Typography >Total: {result?.data?.totalQuestion}</Typography>
             <Typography>Correct: {result?.data?.correctQuestion}</Typography>
-            <Typography>Percentage: {result?.data?.percentage}</Typography>
+            <Typography className="border-bottom">Percentage: {result?.data?.percentage}</Typography> */}
+            <Row className="text-start border-bottom">
+                    <Col>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={isChecked}
+                            onChange={handleCheck}
+                            color="primary"
+                          />
+                        }
+                        label="I hereby declare that I have completed my assessment and have checked the reponse summary.I wish to final submit my assessment responess"
+                      />
+                    </Col>
+                  </Row>
             <Button
               onClick={() => {
                 setIsResultModel(false);
@@ -246,6 +321,7 @@ const MockTestPlay = () => {
                 setIsResultModel(false);
                 navigate("/mocktest");
               }}
+              disabled={!isChecked}
               variant="contained"
               color="primary"
               sx={{ mt: 2 }}
