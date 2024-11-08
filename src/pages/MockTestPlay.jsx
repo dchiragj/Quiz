@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton, FormControlLabel, Checkbox } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
 import { div } from "@tensorflow/tfjs";
@@ -21,7 +21,12 @@ const MockTestPlay = () => {
   const [isChecked, setIsChecked] = useState(false);
   const chatEndRef = useRef(null);
   const [timeLeft, setTimeLeft] = useState(60 * 60);
-
+  const location = useLocation();
+  const studentData = location.state?.studentData.quizNo;
+  const Quiz = {
+    QuizNo :studentData
+  }
+  
   useEffect(() => {
     // Scroll to the latest message
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,9 +83,10 @@ const MockTestPlay = () => {
       const answers = selectedAnswers.map((x) => ({
         questionId: x.questionId,
         selectedAnswer: x.selectedAnswer?.answerKey,
-      }));
+        quizNo:studentData
+      })); 
       await SaveQuizAnswer(answers);
-      const response = await GetQuizResult();
+      const response = await GetQuizResult(Quiz);
       setIsResultModel(true);
       setResult(response.data);
     } catch (error) {
@@ -182,10 +188,10 @@ const MockTestPlay = () => {
         </AppBar>
       </Box>
       <Box  >
-      <div className="text-end d-flex justify-content-end align-items-center">Mock Test Play Time</div>
+      <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
       <div className="text-end d-flex justify-content-end align-items-center">
-        <h1 className="mr-2"><FcClock /> </h1>
-        <h1 >{formatTime(timeLeft)}</h1>
+        <h3 className="mr-2" style={{color:'red'}}><FcClock /> </h3>
+        <h3 style={{color:'red'}}>{formatTime(timeLeft)}</h3>
       </div>
       </Box>
       <Box
@@ -199,11 +205,11 @@ const MockTestPlay = () => {
       >
         <Box
           sx={{
-            backgroundColor: "#f5f5f5",
+            backgroundColor: "#FFEFD5",
             border: "1px solid #e0e0e0",
             borderRadius: "8px",
             padding: "16px",
-            margin: "16px 0",
+            // margin: "16px 0",
             textAlign: "center",
             maxWidth: "600px",
             mx: "auto", // centers horizontally
@@ -334,7 +340,7 @@ const MockTestPlay = () => {
                         color="primary"
                       />
                     }
-                    label="checkbox check after save&exit"
+                    label="Click on the Checkbox Before Submitting your Answer"
                   />
                 </Col>
               </Row>
@@ -352,7 +358,7 @@ const MockTestPlay = () => {
               <Button
                 onClick={() => {
                   setIsResultModel(false);
-                  navigate("/mocktest");
+                  navigate("/feedback");
                 }}
                 disabled={!isChecked}
                 variant="contained"

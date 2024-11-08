@@ -18,6 +18,7 @@ import { StudentGenerateOTP } from "../common/getdata";
 import { AuthContext } from "./context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 function StudentLogin() {
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ function StudentLogin() {
 
   return (
     <div>
-      {/* <Box className="w-100">
+      <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -143,7 +144,7 @@ function StudentLogin() {
             </Typography>
           </Toolbar>
         </AppBar>
-      </Box> */}
+      </Box>
       <div className="login-container p-3 bg-white rounded shadow-sm">
         <img
           src={student}
@@ -174,8 +175,9 @@ function StudentLogin() {
             disabled={!!loginData.enrollment} 
 
           />
-          <div className="text-center">OR</div>
+          <div className="text-center mb-0">OR</div>
           <TextField
+          className="mt-0s"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -204,7 +206,7 @@ function StudentLogin() {
             error={!!error.dateOfBirth}
             helperText={error.dateOfBirth}
           />{" "}
-          <Link href="#" className="d-block text-end mb-3 text-muted">
+          <Link  className="d-block text-end mb-3 font-weight-bold">
             Forgot Enrollment No./ DOB ?
           </Link>
           <Button

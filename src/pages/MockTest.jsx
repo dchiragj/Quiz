@@ -22,15 +22,18 @@ const MockTest = () => {
   const { setMockTestData } = useContext(AuthContext);
   const parameters = {
     Flag: 'Created',
-  };
-
+  };  
   const handleMockTestPlayButton = async () => {
     try {
       const response = await QuizQuestionsList(parameters);
       setMockTestData(response.data);
       if (response.data.status) {
         toast.success(response.data.message); 
-        navigate("/mocktestplay");
+        console.log(response.data.examdetails,"response.data");
+        navigate("/mocktestplay",{
+          
+          state: { studentData: response.data.examdetails},
+        });
       }else{
         toast.error(response.data.message);
       }

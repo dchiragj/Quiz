@@ -132,7 +132,7 @@ function OtpVerification() {
           {/* {/ OTP Input Fields /} */}
           <Box
             className="otp-box d-flex justify-content-between mb-3"
-            style={{ margin: "20px 0" }}
+            style={{ margin: "10px 0" ,gap:'5px'}}
           >
             {otpNum.map((num, index) => (
               <TextField
@@ -144,14 +144,16 @@ function OtpVerification() {
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 inputProps={{
                   maxLength: 1,
-                  style: { textAlign: "center", fontSize: "24px" },
-                }}
+                  }}jh
                 className="mx-1"
                 sx={{
-                  width: "40px",
+                  width: "50px",
+                  height:'60px',
                   backgroundColor: "#E0F0FF",
                   "& .MuiInputBase-input": {
                     textAlign: "center",
+                    fontWeight:'bold',
+                    fontSize:'20px'
                   },
                 }}
               />

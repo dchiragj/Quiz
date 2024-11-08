@@ -19,7 +19,6 @@ const IDCardCapture = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValidImage, setIsValidImage] = useState(false);
   const navigate = useNavigate();
-  console.log("studentData", studentData);
 
 
   // Request camera permissions when the component loads

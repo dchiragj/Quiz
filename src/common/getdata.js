@@ -31,8 +31,8 @@ export const QuizQuestionsList = (values) => {
 export const SaveQuizAnswer = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/SaveQuizzResult`, values, { headers: authHeader() })
 }
-export const GetQuizResult = () => {
-	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzResult`, { headers: authHeader() })
+export const GetQuizResult = (values) => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzResult`, {params: values, headers: authHeader() })
 }
 export const UploadUserImage = (values) => {
 	alert(`values:${JSON.stringify(values)}`)
@@ -46,3 +46,10 @@ export const ResendOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/ResendOTP`,values);
 };
 
+export const GetFeedBackFormDetails = () => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetFeedBackFormDetails`,{headers:authHeader()});
+};
+
+export const SaveFeedBackFormDetails = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/SaveFeedBackFormDetails`,values, { headers: authHeader() });
+};
