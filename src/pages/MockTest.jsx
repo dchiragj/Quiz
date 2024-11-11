@@ -10,18 +10,25 @@ import {
 } from "@mui/material";
 import { TbMathSymbols } from "react-icons/tb";
 import { FaPlay } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchAppBar from "../components/Appbar";
 import { QuizQuestionsList } from "../common/getdata";
 import { AuthContext } from "./context/AuthContext";
 import { toast } from "react-toastify";
+import icons from '../assets/testicons.png'
 import "react-toastify/dist/ReactToastify.css";
 
 const MockTest = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setMockTestData } = useContext(AuthContext);
+  const Storage = JSON.parse(localStorage.getItem("user")).userData  || {}
+
+  
   const parameters = {
     Flag: 'Created',
+    Standard:Storage.class
+
   };  
   const handleMockTestPlayButton = async () => {
     try {
@@ -29,7 +36,8 @@ const MockTest = () => {
       setMockTestData(response.data);
       if (response.data.status) {
         toast.success(response.data.message); 
-        console.log(response.data.examdetails,"response.data");
+        localStorage.setItem("quizNo",JSON.stringify(response.data.examdetails.quizNo))
+
         navigate("/mocktestplay",{
           
           state: { studentData: response.data.examdetails},
@@ -49,12 +57,13 @@ const MockTest = () => {
         <CardContent>
           <div className="w-100 d-flex justify-content-start align-items-center">
             <div variant="h2">
-              <TbMathSymbols color="#000000" fontSize={"40px"} />
+              <img src={icons} width={"40px"}/>
+              {/* <TbMathSymbols color="#000000" fo ntSize={"40px"} /> */}
             </div>
             <div className="w-100 d-flex flex-column justify-content-between ml-4 gy-5">
               <div className="d-flex justify-content-between align-items-center">
                 <Typography variant="h6" color="#000000">
-                  Maths Practice
+                  Practice Test for KAMP -NASTA 2024
                 </Typography>
                 <span style={{ color: "black" }}>12:00</span>
               </div>
@@ -62,12 +71,12 @@ const MockTest = () => {
                 <Typography variant="body2" color="#000000">
                   What would you like to do next?
                 </Typography>
-                <button
+                {/* <button
                   className="border-0 rounded-circle d-flex justify-content-center align-items-center p-2"
                   onClick={handleMockTestPlayButton}
                 >
                   <FaPlay />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -79,7 +88,7 @@ const MockTest = () => {
             >
               <ListItemText
               onClick={handleMockTestPlayButton}
-                primary="Mock Test"
+                primary="Start Mock Test"
                 sx={{
                   color: "#fff",
                   display: "flex",

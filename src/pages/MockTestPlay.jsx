@@ -20,14 +20,21 @@ const MockTestPlay = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const chatEndRef = useRef(null);
-  const [timeLeft, setTimeLeft] = useState(60 * 60);
   const location = useLocation();
   const studentData = location.state?.studentData.quizNo;
+  const parseTimeToSeconds = (timeString) => {
+    const [hours, minutes,seconds ] = timeString.split(":").map(Number);
+    return (seconds || 0)  + (hours * 3600) + (minutes * 60) ;
+  };
+  const Time = location.state?.studentData.examTime;
+  const [timeLeft, setTimeLeft] = useState(parseTimeToSeconds(Time)); 
+  const StudentClas = JSON.parse(localStorage.getItem("user")).userData  || {}
   const Quiz = {
     QuizNo :studentData
   }
-  
-  useEffect(() => {
+
+
+  useEffect(() => {  
     // Scroll to the latest message
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -83,7 +90,8 @@ const MockTestPlay = () => {
       const answers = selectedAnswers.map((x) => ({
         questionId: x.questionId,
         selectedAnswer: x.selectedAnswer?.answerKey,
-        quizNo:studentData
+        quizNo:studentData,
+        classNo:StudentClas.class
       })); 
       await SaveQuizAnswer(answers);
       const response = await GetQuizResult(Quiz);
@@ -189,7 +197,16 @@ const MockTestPlay = () => {
       </Box>
       <Box  >
       <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
-      <div className="text-end d-flex justify-content-end align-items-center">
+      <div className="text-end d-flex justify-content-end align-items-center" style={{
+            position: 'fixed',
+            top: '1px', // adjust as needed
+            right: '1px', // adjust as needed
+            backgroundColor: 'white', // optional: add background for better visibility
+            padding: '8px',
+            borderRadius: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // optional: adds subtle shadow
+            zIndex: 1000
+      }}>
         <h3 className="mr-2" style={{color:'red'}}><FcClock /> </h3>
         <h3 style={{color:'red'}}>{formatTime(timeLeft)}</h3>
       </div>

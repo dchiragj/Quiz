@@ -3,15 +3,16 @@ import { GetFeedBackFormDetails, SaveFeedBackFormDetails } from '../common/getda
 import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import { Button, Col, Row } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const FeedBackForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [feedbackDetails, setFeedbackDetails] = useState([]); // Initialize as an array
   const [selectedOptions, setSelectedOptions] = useState({}); // Store selected answers
-
-
+  const quizNo = JSON.parse(localStorage.getItem("quizNo"))  || '' 
+  const StudentClas = JSON.parse(localStorage.getItem("user")).userData  || {}
   useEffect(() => {
     GetFeedBackForm();
   }, []);
@@ -39,7 +40,9 @@ const FeedBackForm = () => {
   const handlesSubmit = async () => {
     const payload = Object.keys(selectedOptions).map(questionId => ({
       questionId: parseInt(questionId),
-      optionValue: selectedOptions[questionId]
+      optionValue: selectedOptions[questionId],
+      quizNo:quizNo,
+      standard:StudentClas.class
     }));
     try {
       const response = await SaveFeedBackFormDetails(payload);
@@ -71,7 +74,7 @@ const FeedBackForm = () => {
               sx={{ mr: 2 }}
               // onClick={saveAndExit}
             >
-              <IoMdArrowRoundBack color="#000000" />
+              <IoMdArrowRoundBack color="#000000"  />
             </IconButton>
 
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -82,7 +85,7 @@ const FeedBackForm = () => {
       </Box>
       {feedbackDetails.map((questionItem,index) => (
         <div key={questionItem.id} style={{  paddingLeft:"20px",paddingRight:"20px", paddingTop:'10px' }}>
-          <h3>{index + 1}){questionItem.questionText}</h3>
+          <h5>{index + 1}){questionItem.questionText}</h5>
           {questionItem.option.map((opt) => (
             <div key={opt.qValue}>
               <label>
@@ -105,7 +108,7 @@ const FeedBackForm = () => {
             <Button
                variant="contained"
                fullWidth
-               style={{ backgroundColor: "#1a1aff",font:"bold", color:'#fff' }}
+               style={{ backgroundColor: "#1976d2",font:"bold", color:'#fff' }}
               onClick={handlesSubmit}
               disabled={!allOptionsSelected}
             >
