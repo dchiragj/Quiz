@@ -11,7 +11,7 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import student from "../assets/studentlogin.png";
+import student from "../assets/kamplogo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { StudentGenerateOTP } from "../common/getdata";
@@ -29,7 +29,6 @@ function StudentLogin() {
     enrollment: "",
     dateOfBirth: "" ,
   });
- 
   const [focus, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const [error, setError] = useState({
@@ -96,8 +95,8 @@ function StudentLogin() {
     setLoading(true);
     const isValid = validateForm();
     if (!isValid) {
-        setLoading(false);
-        return;
+      setLoading(false);
+      return;
     }
     try {
 
@@ -117,7 +116,7 @@ function StudentLogin() {
       setLoading(false)
     } catch (error) {
       // alert(`catch: ${error}`);
-      
+
       setLoading(false);
       console.log("error-->", error);
     }
@@ -145,11 +144,11 @@ function StudentLogin() {
           </Toolbar>
         </AppBar>
       </Box>
-      <div className="login-container p-3 bg-white rounded shadow-sm">
+      <div className=" d-flex justify-content-center align-items-center flex-column login-container p-3 bg-white rounded shadow-sm">
         <img
           src={student}
           alt="KAMP logo with a human head silhouette filled with dots and the text 'Knowledge & Awareness Mapping Platform'"
-          className="img-fluid mb-3"
+          className="mx-auto mb-4 mt-2 w-100"
         />
         <Typography
           variant="h5"
@@ -172,12 +171,12 @@ function StudentLogin() {
             onChange={handleChange}
             error={!!error.common}
             helperText={error.common}
-            disabled={!!loginData.enrollment} 
+            disabled={!!loginData.enrollment}
 
           />
           <div className="text-center mb-0">OR</div>
           <TextField
-          className="mt-0s"
+            className="mt-0s mt-2"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -201,12 +200,12 @@ function StudentLogin() {
             margin="normal"
             label="DATE OF BIRTH"
             name="dateOfBirth"
-            value={loginData.dateOfBirth }
+            value={loginData.dateOfBirth}
             onChange={(e) => handleChange(e)}
             error={!!error.dateOfBirth}
             helperText={error.dateOfBirth}
           />{" "}
-          <Link  className="d-block text-end mb-3 font-weight-bold">
+          <Link className="d-block text-end mb-3 font-weight-bold">
             Forgot Enrollment No./ DOB ?
           </Link>
           <Button

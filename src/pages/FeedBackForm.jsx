@@ -81,8 +81,8 @@ const FeedBackForm = () => {
         </AppBar>
       </Box>
       {feedbackDetails.map((questionItem,index) => (
-        <div key={questionItem.id} style={{ marginBottom: '20px', padding: '20px' }}>
-          <h3>{index + 1}).{questionItem.questionText}</h3>
+        <div key={questionItem.id} style={{  paddingLeft:"20px",paddingRight:"20px", paddingTop:'10px' }}>
+          <h3>{index + 1}){questionItem.questionText}</h3>
           {questionItem.option.map((opt) => (
             <div key={opt.qValue}>
               <label>

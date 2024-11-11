@@ -310,7 +310,7 @@ const MockTestPlay = () => {
               justifyContent: "center",
             }}
           >
-            <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2 }}>
+            <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2,width:'85%' }}>
               <Typography variant="h6" gutterBottom className="border-bottom">
                 Your Assessment Summary
               </Typography>

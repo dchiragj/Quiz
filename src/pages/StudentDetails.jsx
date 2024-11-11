@@ -103,67 +103,67 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           <Grid item xs={12}>
             <Card className="border border-primary rounded">
               <CardContent>
-                <Typography variant="h5" color="primary">
+                <Typography variant="h5" color="primary" className="mb-3">
                   Student Details
                 </Typography>
-                <hr />
-                <table cellSpacing={2}>
+                {/* <hr /> */}
+                <table className="w-100">
                   <tbody>
-                    <tr>
+                    <tr className=" border-top border-bottom">
                       <td className="py-1 ">
-                        <strong>Student Name : </strong>
+                        <strong>Student Name</strong>
                       </td>
-                      <td>{ProfileDetails?.userName}</td>
+                      <td align="right">{ProfileDetails?.userName}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
-                        <strong>Father's Name : </strong>
+                        <strong>Father's Name</strong>
                       </td>
-                      <td>{ProfileDetails?.fatherName}</td>
+                      <td align="right">{ProfileDetails?.fatherName}</td>
                     </tr>
-                    <tr>
+                    <tr className=" border-top border-bottom">
                       <td className="py-1" >
-                        <strong>Enrollment No : </strong>
+                        <strong>Enrollment No</strong>
                       </td>
-                      <td>{ProfileDetails?.enrollMent}</td>
+                      <td align="right">{ProfileDetails?.enrollMent}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
-                        <strong>Class : </strong>
+                        <strong>Class</strong>
                       </td>
-                      <td>{ProfileDetails?.class}</td>
+                      <td align="right">{ProfileDetails?.class}</td>
                     </tr>
-                    <tr>
+                    <tr className=" border-top border-bottom">
                       <td className="py-1">
-                        <strong>D.O.B : </strong>{" "}
+                        <strong>D.O.B</strong>{" "}
                       </td>
-                      <td>  {ProfileDetails?.dateofBirth
+                      <td align="right">  {ProfileDetails?.dateofBirth
                         ? moment(ProfileDetails.dateofBirth).format('DD/MM/YYYY')
                         : ""}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
-                        <strong>Mobile Number : </strong>
+                        <strong>Mobile Number</strong>
                       </td>
-                      <td>{ProfileDetails?.mobile}</td>
+                      <td align="right">{ProfileDetails?.mobile}</td>
+                    </tr>
+                    <tr className=" border-top border-bottom">
+                      <td className="py-1">
+                        <strong>Gender</strong>
+                      </td>
+                      <td align="right">{ProfileDetails?.gender}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
-                        <strong>Gender : </strong>
+                        <strong>Email ID</strong>
                       </td>
-                      <td>{ProfileDetails?.gender}</td>
+                      <td align="right">{ProfileDetails?.emailId}</td>
                     </tr>
-                    <tr>
+                    <tr className=" border-top border-bottom ">
                       <td className="py-1">
-                        <strong>Email ID : </strong>
+                        <strong>School Name</strong>
                       </td>
-                      <td>{ProfileDetails?.emailId}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">
-                        <strong>School Name : </strong>
-                      </td>
-                      <td>{ProfileDetails?.schoolName}</td>
+                      <td align="right">{ProfileDetails?.schoolName}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -174,8 +174,8 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                   </div>
                 </div>
                 {/* Declaration Checkbox */}
-                <Row className="">
-                  <Col>
+                <Row className="w-100">
+                  {/* <Col> */}
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -186,7 +186,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                       }
                       label="I hereby declare that the above information is true and correct."
                     />
-                  </Col>
+                  {/* </Col> */}
                 </Row>
                 <div className="text-center">
                   <Button
