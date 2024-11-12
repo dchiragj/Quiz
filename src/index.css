@@ -11,3 +11,51 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+
+.content__footer {
+  padding-top: 30px;
+}
+
+
+  .form-label {
+    display: flex;
+    align-items: center; /* Align label with input vertically */
+  }
+
+  .direct-bot-content img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    margin: 10px 0;
+    display: block;
+    font-size: 20px;
+  }
+  
+  .direct-user-content img {
+    width: 10px;
+    height: 100px;
+    object-fit: contain;
+    margin: auto;
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+  }
+  .backgroundImage{
+    /* background-image: url("../src/assets/test.jpg"); */
+    background-size: cover;
+    position: relative;
+  }
+  .backgroundImage::before {
+    background-image: url("../src/assets/test.jpg");
+    position: absolute;
+    content: "";
+    width: 100%;
+    min-height: 100%;
+    z-index: -1;
+    filter: brightness(1.1);
+   } 
+   .direct-bot-content span span{
+    font-size: 18px;
+   }

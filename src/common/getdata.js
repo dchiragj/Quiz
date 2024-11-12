@@ -35,7 +35,6 @@ export const GetQuizResult = (values) => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzResult`, {params: values, headers: authHeader() })
 }
 export const UploadUserImage = (values) => {
-	alert(`values:${JSON.stringify(values)}`)
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UploadUserImage`,values, { headers: authHeader() })
 }
 

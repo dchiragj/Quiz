@@ -16,7 +16,7 @@ function Sidebar({ isOpen, setIsOpen, user }) {
     const navigate = useNavigate()
     const handleLogout = () => {
         setIsOpen(false);  // Close the Sidebar
-        navigate("/studentlogin");  // Navigate to the login page
+        navigate("/studentlogin?message=logout");  // Navigate to login page with a message parameter
     };
 
     return (

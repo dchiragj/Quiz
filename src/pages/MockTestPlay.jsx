@@ -8,6 +8,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
 import { FcClock } from "react-icons/fc";
 import { toast } from "react-toastify";
+import Chatimg from '../assets/test.jpg'
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
@@ -21,20 +22,21 @@ const MockTestPlay = () => {
   const [isChecked, setIsChecked] = useState(false);
   const chatEndRef = useRef(null);
   const location = useLocation();
+  const Directfile = location.state?.studentData.createdBy
   const studentData = location.state?.studentData.quizNo;
   const parseTimeToSeconds = (timeString) => {
-    const [hours, minutes,seconds ] = timeString.split(":").map(Number);
-    return (seconds || 0)  + (hours * 3600) + (minutes * 60) ;
+    const [hours, minutes, seconds] = timeString.split(":").map(Number);
+    return (seconds || 0) + (hours * 3600) + (minutes * 60);
   };
   const Time = location.state?.studentData.examTime;
-  const [timeLeft, setTimeLeft] = useState(parseTimeToSeconds(Time)); 
-  const StudentClas = JSON.parse(localStorage.getItem("user")).userData  || {}
+  const [timeLeft, setTimeLeft] = useState(parseTimeToSeconds(Time));
+  const StudentClas = JSON.parse(localStorage.getItem("user")).userData || {}
   const Quiz = {
-    QuizNo :studentData
+    QuizNo: studentData
   }
 
 
-  useEffect(() => {  
+  useEffect(() => {
     // Scroll to the latest message
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -90,9 +92,9 @@ const MockTestPlay = () => {
       const answers = selectedAnswers.map((x) => ({
         questionId: x.questionId,
         selectedAnswer: x.selectedAnswer?.answerKey,
-        quizNo:studentData,
-        classNo:StudentClas.class
-      })); 
+        quizNo: studentData,
+        classNo: StudentClas.class
+      }));
       await SaveQuizAnswer(answers);
       const response = await GetQuizResult(Quiz);
       setIsResultModel(true);
@@ -114,67 +116,171 @@ const MockTestPlay = () => {
   }
 
   // Function to parse the question text and embed images
-  const renderQuestionWithImages = (text, type) => {
+  //  const renderQuestionWithImages = (text, type) => {
+  //   const imgMatch = text.match(/\(#(\d+)img\)/);
+  //   const imgSrc = imgMatch
+  //     ? require(`../assets/imgs/${imgMatch[1]}img.png`)
+  //     : null;
+  //   const splitedData =
+  //     text.split(/\s*\(#\d+img\)\s*/);
+  //   if (type === 'bot') {
+  //     return (
+  //       <>
+  //         {splitedData[0]}
+  //         {imgSrc && (
+  //           <Box
+  //             sx={{
+  //               margin: "10px 0",
+  //               display: "flex",
+  //               justifyContent: "center",
+  //             }}
+  //           >
+  //             <img
+  //               src={imgSrc}
+  //               alt={`${imgMatch[1]}img`}
+  //               style={{
+  //                 maxWidth: "100%",
+  //                 maxHeight: "200px",
+  //                 height: "auto",
+  //               }}
+  //             />
+  //           </Box>
+  //         )}
+  //         {splitedData[1]}
+  //       </>
+  //     )
+  //   } else if (type === 'user') {
+  //     return (
+  //       <>
+  //         {text.includes("#") ? (
+  //           <img
+  //             src={require(`../assets/imgs/${text.replace(
+  //               "#",
+  //               ""
+  //             )}.png`)}
+  //             alt={text}
+  //             style={{
+  //               width: "100px",
+  //               height: "100px",
+  //               objectFit: "contain",
+  //             }}
+  //           />
+  //         ) : (
+  //           text
+  //         )}
+  //       </>
+  //     )
+  //   }
 
-    const imgMatch = text.match(/\(#(\d+)img\)/);
-    const imgSrc = imgMatch
-      ? require(`../assets/imgs/${imgMatch[1]}img.png`)
-      : null;
-    const splitedData =
-      text.split(/\s*\(#\d+img\)\s*/);
-    if (type === 'bot') {
-      return (
-        <>
-          {splitedData[0]}
-          {imgSrc && (
-            <Box
-              sx={{
-                margin: "10px 0",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+  // };
+
+  // const Direct = (text, type) => {
+  //   if (type === 'bot') {
+  //     return (
+  //       <div style={{ }}
+  //         dangerouslySetInnerHTML={{
+  //           __html: text, // Directly inject the HTML content
+  //         }}
+  //       />
+  //     );
+  //   } else if (type === 'user') {
+  //     // If you need to do any processing on the options (like extracting images from the text)
+  //     return (
+  //       <div style={{width: "100px",
+  //         height: "100px",
+  //         objectFit: "contain",}}
+  //         dangerouslySetInnerHTML={{
+  //           __html: text, // Same for user responses
+  //         }}
+  //       />
+  //     );
+  //   }
+  // }
+
+  const createdBy = (text, type) => {
+    if (Directfile === 'Direct') {
+      if (type === 'bot') {
+        return (
+          <div className="direct-bot-content"
+            dangerouslySetInnerHTML={{
+              __html: text, // Directly inject the HTML content
+            }}
+          />
+        );
+      } else if (type === 'user') {
+        // If you need to do any processing on the options (like extracting images from the text)
+        return (
+          <div className="direct-user-content"
+            dangerouslySetInnerHTML={{
+              __html: text, // Same for user responses
+            }}
+          />
+        );
+      }
+    } else {
+      const imgMatch = text.match(/\(#(\d+)img\)/);
+      const imgSrc = imgMatch
+        ? require(`../assets/imgs/${imgMatch[1]}img.png`)
+        : null;
+      const splitedData =
+        text.split(/\s*\(#\d+img\)\s*/);
+      if (type === 'bot') {
+        return (
+          <>
+            {splitedData[0]}
+            {imgSrc && (
+              <Box
+                sx={{
+                  margin: "10px 0",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={imgSrc}
+                  alt={`${imgMatch[1]}img`}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    height: "auto",
+                  }}
+                />
+              </Box>
+            )}
+            {splitedData[1]}
+          </>
+        )
+      } else if (type === 'user') {
+        return (
+          <>
+            {text.includes("#") ? (
               <img
-                src={imgSrc}
-                alt={`${imgMatch[1]}img`}
+                src={require(`../assets/imgs/${text.replace(
+                  "#",
+                  ""
+                )}.png`)}
+                alt={text}
                 style={{
-                  maxWidth: "100%",
-                  maxHeight: "200px",
-                  height: "auto",
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "contain",
                 }}
               />
-            </Box>
-          )}
-          {splitedData[1]}
-        </>
-      )
-    } else if (type === 'user') {
-      return (
-        <>
-          {text.includes("#") ? (
-            <img
-              src={require(`../assets/imgs/${text.replace(
-                "#",
-                ""
-              )}.png`)}
-              alt={text}
-              style={{
-                width: "100px",
-                height: "100px",
-                objectFit: "contain",
-              }}
-            />
-          ) : (
-            text
-          )}
-        </>
-      )
+            ) : (
+              text
+            )}
+          </>
+        )
+      }
     }
+  }
+  useEffect(() => {
 
-  };
+  }, [])
 
   return (
-    <div>
+    // style={{ backgroundImage: `url(${Chatimg})`,}}
+    <div className="backgroundImage">
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
@@ -196,20 +302,20 @@ const MockTestPlay = () => {
         </AppBar>
       </Box>
       <Box  >
-      <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
-      <div className="text-end d-flex justify-content-end align-items-center" style={{
-            position: 'fixed',
-            top: '1px', // adjust as needed
-            right: '1px', // adjust as needed
-            backgroundColor: 'white', // optional: add background for better visibility
-            padding: '8px',
-            borderRadius: '5px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // optional: adds subtle shadow
-            zIndex: 1000
-      }}>
-        <h3 className="mr-2" style={{color:'red'}}><FcClock /> </h3>
-        <h3 style={{color:'red'}}>{formatTime(timeLeft)}</h3>
-      </div>
+        <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
+        <div className="text-end d-flex justify-content-end align-items-center" style={{
+          position: 'fixed',
+          top: '1px', // adjust as needed
+          right: '1px', // adjust as needed
+          backgroundColor: 'white', // optional: add background for better visibility
+          padding: '8px',
+          borderRadius: '5px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // optional: adds subtle shadow
+          zIndex: 1000
+        }}>
+          <h3 className="mr-2" style={{ color: 'red' }}><FcClock /> </h3>
+          <h3 style={{ color: 'red' }}>{formatTime(timeLeft)}</h3>
+        </div>
       </Box>
       <Box
         sx={{
@@ -265,10 +371,11 @@ const MockTestPlay = () => {
                 padding: 2,
                 backgroundColor: msg.type === "bot" ? "#e0f7fa" : "#c8e6c9",
                 alignSelf: msg.type === "bot" ? "flex-start" : "flex-end",
-                maxWidth: "80%",
+                fontSize :msg.type == "bot" ? "20px" : '',
+                maxWidth: "auto",
               }}
             >
-              <Typography variant="body1">{renderQuestionWithImages(msg.content, msg.type)}</Typography>
+              <Typography variant="body1">{createdBy(msg.content, msg.type)}</Typography>
               <Typography variant="caption" sx={{ display: "block", textAlign: "right" }}>
                 {msg.time}
               </Typography>
@@ -278,7 +385,7 @@ const MockTestPlay = () => {
           {mockTestData?.data?.length > currentQuestionIndex && (
             <Box sx={{ marginBottom: 3 }}>
               <Typography variant="body1">
-                {renderQuestionWithImages(`${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, "bot")}
+                {createdBy(`${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, "bot")}
               </Typography>
               {Object.entries(mockTestData.data[currentQuestionIndex]?.options).map(([key, value], idx) => (
                 // {mockTestData.data[currentQuestionIndex]?.options?.map((option, idx) => (
@@ -292,14 +399,16 @@ const MockTestPlay = () => {
                     )
                   }
                   sx={{
-                    display: "block",
+                    display: "flex",
+                    justifyContent:'flex-start',
+                    alignItems: "center",
                     marginTop: 1,
                     textAlign: "left",
                     backgroundColor: "#f5f5f5",
                     width: "100%",
                   }}
                 >
-                  {`${optionLabels[idx]}). `}{renderQuestionWithImages(value, 'user')}
+                  {`${optionLabels[idx]}). `}{createdBy(value, 'user')}
                 </Button>
               ))}
             </Box>
@@ -327,7 +436,7 @@ const MockTestPlay = () => {
               justifyContent: "center",
             }}
           >
-            <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2,width:'85%' }}>
+            <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2, width: '85%' }}>
               <Typography variant="h6" gutterBottom className="border-bottom">
                 Your Assessment Summary
               </Typography>
