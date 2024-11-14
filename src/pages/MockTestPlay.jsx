@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton, FormControlLabel, Checkbox } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
-import { GetQuizResult, SaveQuizAnswer } from "../common/getdata";
+import { GetQuizResult, QuizQuestionsList, SaveQuizAnswer } from "../common/getdata";
 import { div } from "@tensorflow/tfjs";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
@@ -20,6 +20,7 @@ const MockTestPlay = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [chatHistory, setChatHistory] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [test, settest] = useState();
   const chatEndRef = useRef(null);
   const location = useLocation();
   const Directfile = location.state?.studentData.createdBy
@@ -30,10 +31,11 @@ const MockTestPlay = () => {
   };
   const Time = location.state?.studentData.examTime;
   const [timeLeft, setTimeLeft] = useState(parseTimeToSeconds(Time));
-  const StudentClas = JSON.parse(localStorage.getItem("user")).userData || {}
+  // const StudentClas = JSON.parse(localStorage.getItem("user")) || {}
   const Quiz = {
     QuizNo: studentData
   }
+  const sound = new Audio("/click-sound.mp3");
 
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const MockTestPlay = () => {
         questionId: x.questionId,
         selectedAnswer: x.selectedAnswer?.answerKey,
         quizNo: studentData,
-        classNo: StudentClas.class
+        // classNo: StudentClas.classId
       }));
       await SaveQuizAnswer(answers);
       const response = await GetQuizResult(Quiz);
@@ -105,6 +107,7 @@ const MockTestPlay = () => {
   };
 
   const onAnswerSelect = (questionId, answerKey, answerVal) => {
+    sound.play();
     setSelectedAnswers((prev) => [
       ...prev,
       { questionId, selectedAnswer: { answerKey, answerVal } },
@@ -275,7 +278,6 @@ const MockTestPlay = () => {
     }
   }
   useEffect(() => {
-
   }, [])
 
   return (
@@ -371,7 +373,7 @@ const MockTestPlay = () => {
                 padding: 2,
                 backgroundColor: msg.type === "bot" ? "#e0f7fa" : "#c8e6c9",
                 alignSelf: msg.type === "bot" ? "flex-start" : "flex-end",
-                fontSize :msg.type == "bot" ? "20px" : '',
+                fontSize: msg.type == "bot" ? "20px" : '',
                 maxWidth: "auto",
               }}
             >
@@ -400,7 +402,7 @@ const MockTestPlay = () => {
                   }
                   sx={{
                     display: "flex",
-                    justifyContent:'flex-start',
+                    justifyContent: 'flex-start',
                     alignItems: "center",
                     marginTop: 1,
                     textAlign: "left",

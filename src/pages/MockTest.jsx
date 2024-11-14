@@ -17,32 +17,42 @@ import { AuthContext } from "./context/AuthContext";
 import { toast } from "react-toastify";
 import icons from '../assets/testicons.png'
 import "react-toastify/dist/ReactToastify.css";
+import Tabs from "../components/Tabs";
+import TabsCom from "../components/Tabs";
+
 
 const MockTest = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setMockTestData } = useContext(AuthContext);
-  const Storage = JSON.parse(localStorage.getItem("user")).userData  || {}
-
+  // const Storage = JSON.parse(localStorage.getItem("user")) || {}
+  console.log(Storage,"Storage");
   
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const parameters = {
     Flag: 'Created',
-    Standard:Storage.class
+    // Standard: Storage.classId
 
-  };  
+  };
   const handleMockTestPlayButton = async () => {
     try {
       const response = await QuizQuestionsList(parameters);
       setMockTestData(response.data);
       if (response.data.status) {
-        toast.success(response.data.message); 
-        localStorage.setItem("quizNo",JSON.stringify(response.data.examdetails.quizNo))
+        toast.success(response.data.message);
+        localStorage.setItem("quizNo", JSON.stringify(response.data.examdetails.quizNo))
 
-        navigate("/mocktestplay",{
-          
-          state: { studentData: response.data.examdetails},
+        navigate("/mocktestplay", {
+
+          state: { studentData: response.data.examdetails },
         });
-      }else{
+      } else {
         toast.error(response.data.message);
       }
     } catch (error) {
@@ -57,7 +67,7 @@ const MockTest = () => {
         <CardContent>
           <div className="w-100 d-flex justify-content-start align-items-center">
             <div variant="h2">
-              <img src={icons} width={"40px"}/>
+              <img src={icons} width={"40px"} />
               {/* <TbMathSymbols color="#000000" fo ntSize={"40px"} /> */}
             </div>
             <div className="w-100 d-flex flex-column justify-content-between ml-4 gy-5">
@@ -87,7 +97,7 @@ const MockTest = () => {
               sx={{ backgroundColor: "#333", borderRadius: "4px" }}
             >
               <ListItemText
-              onClick={handleMockTestPlayButton}
+                onClick={handleMockTestPlayButton}
                 primary="Start Mock Test"
                 sx={{
                   color: "#fff",
@@ -99,6 +109,9 @@ const MockTest = () => {
           </List>
         </CardContent>
       </Card>
+      <div>
+      <TabsCom/>
+      </div>
     </>
   );
 };

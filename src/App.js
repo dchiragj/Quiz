@@ -16,6 +16,8 @@ import FaceCapture from './pages/FaceCapture';
 import IdCardCapture from './pages/IdCardCapture';
 import { useState } from 'react';
 import Sidebar from './pages/Offcanvas';
+import FeedBackForm from './pages/FeedBackForm';
+import Videoplay from './pages/Videoplay';
 
 
 
@@ -28,17 +30,20 @@ function App() {
     <AuthProvider>
     <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}  user={user}/>
       <Routes >
-        <Route path="/" element={<Navigate to="/login" />} />
+        {/* <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/studentlogin" element={<AuthProvider><StudentLogin /></AuthProvider>} />
-        <Route path="/otp" element={<AuthProvider><OtpVerification /></AuthProvider>} />
+        <Route path="/otp" element={<AuthProvider><OtpVerification /></AuthProvider>} /> */}
+        <Route path="/studentdetails" element={<AuthProvider><StudentDetails isOpen={isOpen} setIsOpen={setIsOpen}  user={user} setUser={setUser}/></AuthProvider>} />
         <Route path="/mocktest" element={<AuthProvider><MockTest /></AuthProvider>} />
         <Route path="/mocktestplay" element={<AuthProvider><MockTestPlay /></AuthProvider>} />
         <Route path="/mocktestsecond" element={<MockTestSecond />} />
-        <Route path="/studentdetails" element={<AuthProvider><StudentDetails isOpen={isOpen} setIsOpen={setIsOpen}  user={user} setUser={setUser}/></AuthProvider>} />
         <Route path="/examintroduction" element={<ExamInstructions />} />
         <Route path="/facecapture" element={<FaceCapture />} />
+        <Route path="/feedback" element={<FeedBackForm />} />
         <Route path="/idcard" element={<AuthProvider><IdCardCapture /></AuthProvider>} />
+        <Route path="/videoplay" element={<Videoplay />} />
+
       </Routes>
     </AuthProvider>
       <ToastContainer

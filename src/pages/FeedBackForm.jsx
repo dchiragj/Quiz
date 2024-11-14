@@ -12,7 +12,7 @@ const FeedBackForm = () => {
   const [feedbackDetails, setFeedbackDetails] = useState([]); // Initialize as an array
   const [selectedOptions, setSelectedOptions] = useState({}); // Store selected answers
   const quizNo = JSON.parse(localStorage.getItem("quizNo"))  || '' 
-  const StudentClas = JSON.parse(localStorage.getItem("user")).userData  || {}
+  const StudentClas = JSON.parse(localStorage.getItem("user")) || {}
   useEffect(() => {
     GetFeedBackForm();
   }, []);
@@ -42,7 +42,7 @@ const FeedBackForm = () => {
       questionId: parseInt(questionId),
       optionValue: selectedOptions[questionId],
       quizNo:quizNo,
-      standard:StudentClas.class
+      // standard:StudentClas.class
     }));
     try {
       const response = await SaveFeedBackFormDetails(payload);

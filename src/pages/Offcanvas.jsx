@@ -11,10 +11,9 @@ import { CiBookmark } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
 
 function Sidebar({ isOpen, setIsOpen, user }) {
-    
-    console.log(user, "usr");
     const navigate = useNavigate()
     const handleLogout = () => {
+        localStorage.clear()
         setIsOpen(false);  // Close the Sidebar
         navigate("/studentlogin?message=logout");  // Navigate to login page with a message parameter
     };

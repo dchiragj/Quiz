@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   Grid,
   IconButton,
@@ -12,12 +13,14 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoMdMenu } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { GetUserDetails } from "../common/getdata";
 import moment from 'moment';
+import { Token } from "@mui/icons-material";
+import { div } from "@tensorflow/tfjs";
 
 
 
@@ -28,13 +31,28 @@ import moment from 'moment';
 // import { AuthContext } from "./context/AuthContext";
 
 function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
+  const urlSearchString = window. location.search; 
+  const params = new URLSearchParams(urlSearchString);
+  const tokenString = params.get("token")
+  if (tokenString) {
+    localStorage.setItem('tokenGet', tokenString);
+  }
+  const [isLoading, setIsLoading] = useState(false);
+  console.log(tokenString, "tokenString");
+
   const navigate = useNavigate();
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
   const [isChecked, setIsChecked] = useState(false);
   const [ProfileDetails, setProfileDetails] = useState();
 
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setIsLoading(false); // Stop loading after 5 seconds
+  //   }, 5000);
 
+  //   return () => clearTimeout(timer); // Clean up the timer
+  // }, []);
   // const toggleDrawer = (open) => () => {
   //   setIsOpen(open);
   // };
@@ -45,17 +63,23 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
     GetprofileDetails()
   }, [])
   const GetprofileDetails = async () => {
+    setIsLoading(true)
     try {
       const response = await GetUserDetails();
-      setProfileDetails(response.data.data);
-      setUser(response.data.data)
       if (response.data.status) {
+        setIsLoading(false)
+        setProfileDetails(response.data.data);
+        localStorage.setItem("user", JSON.stringify(response.data.data));
+        setUser(response.data.data)
         // toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
+        setIsLoading(true)
       }
     } catch (error) {
       console.log("error-->", error);
+      // setIsLoading(true)/
+
     }
   }
 
@@ -95,8 +119,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           </Toolbar>
         </AppBar>
       </Box>
-      <div>
-
+      {isLoading ? <div className="text-center mt-5"><CircularProgress size={40} style={{ color: "black" ,}} /></div>  : <div>
         {/* // <Box sx={{ maxWidth: '900px', margin: 'auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}> */}
         <Grid className="m-2">
           {/* Student Details Section */}
@@ -113,7 +136,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                       <td className="py-1 ">
                         <strong>Student Name</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.userName}</td>
+                      <td align="right">{ProfileDetails?.candidate_Name}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
@@ -125,27 +148,27 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                       <td className="py-1" >
                         <strong>Enrollment No</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.enrollMent}</td>
+                      <td align="right">{ProfileDetails?.enrollmentNo}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Class</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.class}</td>
+                      <td align="right">{ProfileDetails?.classId}</td>
                     </tr>
                     <tr className=" border-top border-bottom">
                       <td className="py-1">
                         <strong>D.O.B</strong>{" "}
                       </td>
-                      <td align="right">  {ProfileDetails?.dateofBirth
-                        ? moment(ProfileDetails.dateofBirth).format('DD/MM/YYYY')
+                      <td align="right">  {ProfileDetails?.dateOfBirth
+                        ? moment(ProfileDetails.dateOfBirth).format('DD/MM/YYYY')
                         : ""}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Mobile Number</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.mobile}</td>
+                      <td align="right">{ProfileDetails?.mobileNo}</td>
                     </tr>
                     <tr className=" border-top border-bottom">
                       <td className="py-1">
@@ -169,23 +192,23 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                 </table>
                 <div className="container">
                   <div className="row  ">
-                    <img src={ProfileDetails?.userImage} alt="Student" className="w-25 col" />
-                    <img src={ProfileDetails?.userIdentityCard} alt="Document" className="w-25 col" />
+                    <img src={`data:image/jpeg;base64,${ProfileDetails?.userImage}`} alt="Student" className="w-25 col" />
+                    <img src={`data:image/jpeg;base64,${ProfileDetails?.userIdentityCard}`} alt="Document" className="w-25 col" />
                   </div>
                 </div>
                 {/* Declaration Checkbox */}
                 <Row className="w-100">
                   {/* <Col> */}
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={isChecked}
-                          onChange={handleCheck}
-                          color="primary"
-                        />
-                      }
-                      label="I hereby declare that the above information is true and correct."
-                    />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={handleCheck}
+                        color="primary"
+                      />
+                    }
+                    label="I hereby declare that the above information is true and correct."
+                  />
                   {/* </Col> */}
                 </Row>
                 <div className="text-center">
@@ -204,7 +227,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           </Grid>
         </Grid>
 
-      </div>
+      </div>}
     </div>
   );
 }
