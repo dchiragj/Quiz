@@ -2,24 +2,28 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, Typography, Paper, AppBar, Toolbar, IconButton, FormControlLabel, Checkbox } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
-import { GetQuizResult, QuizQuestionsList, SaveQuizAnswer } from "../common/getdata";
+import { GetQuestionDetailsById, GetQuizResult, QuizQuestionsList, SaveQuizAnswer } from "../common/getdata";
 import { div } from "@tensorflow/tfjs";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
 import { FcClock } from "react-icons/fc";
 import { toast } from "react-toastify";
+import { TbRefresh } from "react-icons/tb";
 import Chatimg from '../assets/test.jpg'
+import { queries } from "@testing-library/react";
 
 const MockTestPlay = () => {
   const navigate = useNavigate();
   const optionLabels = ['A', 'B', 'C', 'D'];
   const { mockTestData } = useContext(AuthContext);
+  const [question, setQuestion] = useState(mockTestData);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [result, setResult] = useState({});
   const [isResultModel, setIsResultModel] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [chatHistory, setChatHistory] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  // const [refreshedQuestion, setRefreshedQuestion] = useState(null);
   const [test, settest] = useState();
   const chatEndRef = useRef(null);
   const location = useLocation();
@@ -75,12 +79,13 @@ const MockTestPlay = () => {
   const handleNextQuestion = (answerObj) => {
     setChatHistory((prev) => [
       ...prev,
-      { type: "bot", content: `${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, time: getCurrentTime() },
+      { type: "bot", content: `${currentQuestionIndex + 1}. ${question.data[currentQuestionIndex]?.qText}`, time: getCurrentTime() },
       { type: "user", content: answerObj.answerVal, time: getCurrentTime() },
     ]);
 
-    if (currentQuestionIndex < mockTestData.data.length) {
+    if (currentQuestionIndex < question.data.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      // setRefreshedQuestion(null);
     } else {
       setChatHistory((prev) => [
         ...prev,
@@ -97,12 +102,22 @@ const MockTestPlay = () => {
         quizNo: studentData,
         // classNo: StudentClas.classId
       }));
-      await SaveQuizAnswer(answers);
-      const response = await GetQuizResult(Quiz);
-      setIsResultModel(true);
-      setResult(response.data);
+      const saveResponse = await SaveQuizAnswer(answers);
+      console.log("SaveQuizAnswer response:", saveResponse?.data);
+      if (saveResponse?.data?.data.quizNo && saveResponse?.data?.data.attemptId) {
+        const Quiz = {
+          QuizNo: saveResponse.data.data.quizNo,
+          AttemptId: saveResponse.data.data.attemptId,
+        };
+        const resultResponse = await GetQuizResult(Quiz);
+        // Update state with the result
+        setIsResultModel(true);
+        setResult(resultResponse.data);
+      } else {
+        console.error("SaveQuizAnswer response missing quizNo or attemptId.");
+      }
     } catch (error) {
-      console.log("error", error);
+      console.error("Error during quiz submission:", error);
     }
   };
 
@@ -117,88 +132,25 @@ const MockTestPlay = () => {
   const saveAndExit = () => {
     navigate("/mocktest")
   }
-
-  // Function to parse the question text and embed images
-  //  const renderQuestionWithImages = (text, type) => {
-  //   const imgMatch = text.match(/\(#(\d+)img\)/);
-  //   const imgSrc = imgMatch
-  //     ? require(`../assets/imgs/${imgMatch[1]}img.png`)
-  //     : null;
-  //   const splitedData =
-  //     text.split(/\s*\(#\d+img\)\s*/);
-  //   if (type === 'bot') {
-  //     return (
-  //       <>
-  //         {splitedData[0]}
-  //         {imgSrc && (
-  //           <Box
-  //             sx={{
-  //               margin: "10px 0",
-  //               display: "flex",
-  //               justifyContent: "center",
-  //             }}
-  //           >
-  //             <img
-  //               src={imgSrc}
-  //               alt={`${imgMatch[1]}img`}
-  //               style={{
-  //                 maxWidth: "100%",
-  //                 maxHeight: "200px",
-  //                 height: "auto",
-  //               }}
-  //             />
-  //           </Box>
-  //         )}
-  //         {splitedData[1]}
-  //       </>
-  //     )
-  //   } else if (type === 'user') {
-  //     return (
-  //       <>
-  //         {text.includes("#") ? (
-  //           <img
-  //             src={require(`../assets/imgs/${text.replace(
-  //               "#",
-  //               ""
-  //             )}.png`)}
-  //             alt={text}
-  //             style={{
-  //               width: "100px",
-  //               height: "100px",
-  //               objectFit: "contain",
-  //             }}
-  //           />
-  //         ) : (
-  //           text
-  //         )}
-  //       </>
-  //     )
-  //   }
-
-  // };
-
-  // const Direct = (text, type) => {
-  //   if (type === 'bot') {
-  //     return (
-  //       <div style={{ }}
-  //         dangerouslySetInnerHTML={{
-  //           __html: text, // Directly inject the HTML content
-  //         }}
-  //       />
-  //     );
-  //   } else if (type === 'user') {
-  //     // If you need to do any processing on the options (like extracting images from the text)
-  //     return (
-  //       <div style={{width: "100px",
-  //         height: "100px",
-  //         objectFit: "contain",}}
-  //         dangerouslySetInnerHTML={{
-  //           __html: text, // Same for user responses
-  //         }}
-  //       />
-  //     );
-  //   }
-  // }
+  const handleRefreshQuestion = async (questionId) => {
+    try {
+      const response = await GetQuestionDetailsById({ questionId });
+      if (response.data.status) {
+        toast.success("Question refreshed successfully..!!");
+        // Update the specific question in the state
+        setQuestion(prev => ({
+          ...prev,
+          data: prev.data.map(q =>
+            q.questionId === questionId ? response.data.data : q // Replace the old question with the new one
+          )
+        }));
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error-->", error);
+    }
+  };
 
   const createdBy = (text, type) => {
     if (Directfile === 'Direct') {
@@ -279,7 +231,6 @@ const MockTestPlay = () => {
   }
   useEffect(() => {
   }, [])
-
   return (
     // style={{ backgroundImage: `url(${Chatimg})`,}}
     <div className="backgroundImage">
@@ -384,24 +335,33 @@ const MockTestPlay = () => {
             </Paper>
           ))}
           <div ref={chatEndRef} />
-          {mockTestData?.data?.length > currentQuestionIndex && (
+          {question?.data?.length > currentQuestionIndex && (
             <Box sx={{ marginBottom: 3 }}>
-              <Typography variant="body1">
-                {createdBy(`${currentQuestionIndex + 1}. ${mockTestData.data[currentQuestionIndex]?.qText}`, "bot")}
+              <Typography variant="body1" sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                {createdBy(`${currentQuestionIndex + 1}. ${question.data[currentQuestionIndex]?.qText}`, "bot")}
+                <div
+                  // variant="outlined"
+                  color="primary"
+                  onClick={() => handleRefreshQuestion(question.data[currentQuestionIndex]?.questionId)}
+                  sx={{ px: 1 }}
+                >
+                  <TbRefresh fontSize={20} color="#0d6efd" />
+                </div>
               </Typography>
-              {Object.entries(mockTestData.data[currentQuestionIndex]?.options).map(([key, value], idx) => (
-                // {mockTestData.data[currentQuestionIndex]?.options?.map((option, idx) => (
+              {question.data[currentQuestionIndex]?.options && Object.entries(question.data[currentQuestionIndex]?.options).map(([key, value], idx) => (
+                // {question.data[currentQuestionIndex]?.options?.map((option, idx) => (
                 <Button
                   key={idx}
                   onClick={() =>
                     onAnswerSelect(
-                      mockTestData.data[currentQuestionIndex].questionId,
+                      question.data[currentQuestionIndex]?.questionId,
                       key,
                       value
                     )
                   }
                   sx={{
                     display: "flex",
+                    border: "1px solid #0d6efd",
                     justifyContent: 'flex-start',
                     alignItems: "center",
                     marginTop: 1,
@@ -416,7 +376,7 @@ const MockTestPlay = () => {
             </Box>
           )}
 
-          {mockTestData?.data?.length === currentQuestionIndex && (
+          {question?.data?.length === currentQuestionIndex && (
             <Button
               variant="contained"
               color="primary" onClick={handleSubmit}>Submit</Button>

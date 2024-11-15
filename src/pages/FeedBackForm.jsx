@@ -86,7 +86,7 @@ const FeedBackForm = () => {
       <div className='border border-primary rounded m-2'>
       {feedbackDetails.map((questionItem,index) => (
         <div key={questionItem.id} style={{  paddingLeft:"20px",paddingRight:"20px", paddingTop:'10px' }}>
-          <h5>{index + 1}){questionItem.questionText}</h5>
+          <h6>{index + 1}){questionItem.questionText}</h6>
           {questionItem.option.map((opt) => (
             <div key={opt.qValue}>
               <label>

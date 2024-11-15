@@ -59,3 +59,9 @@ export const SaveFeedBackFormDetails = (values) => {
 export const GetURLAndStandardDetails = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetURLAndStandardDetails`, {} ,{ headers: authHeader() });
 };
+export const GetQuestionDetailsById = (values) => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuestionDetailsById`, {params: values, headers: authHeader() });
+};
+export const GetTotalQuizzAttemptList = (values) => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetTotalQuizzAttemptList`, {params: values, headers: authHeader() });
+};
