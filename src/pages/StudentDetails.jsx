@@ -38,7 +38,6 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
     localStorage.setItem('tokenGet', tokenString);
   }
   const [isLoading, setIsLoading] = useState(false);
-  console.log(tokenString, "tokenString");
 
   const navigate = useNavigate();
   const location = useLocation();

@@ -251,10 +251,17 @@ const MockTestPlay = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Mock Test Play
             </Typography>
+            <div style={{ color: 'black' }}>
+              <div className="text-end d-flex justify-content-end align-items-center mr-2">Mock Test Time</div>
+              <div className="text-end d-flex justify-content-end align-items-center mr-2" >
+                <h3 className="mr-2"><FcClock /> </h3>
+                <h3 >{formatTime(timeLeft)}</h3>
+              </div>
+            </div>
           </Toolbar>
         </AppBar>
       </Box>
-      <Box  >
+      {/* <Box  >
         <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
         <div className="text-end d-flex justify-content-end align-items-center" style={{
           position: 'fixed',
@@ -269,7 +276,7 @@ const MockTestPlay = () => {
           <h3 className="mr-2" style={{ color: 'red' }}><FcClock /> </h3>
           <h3 style={{ color: 'red' }}>{formatTime(timeLeft)}</h3>
         </div>
-      </Box>
+      </Box> */}
       <Box
         sx={{
           // height: "100vh",

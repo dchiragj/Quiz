@@ -63,5 +63,5 @@ export const GetQuestionDetailsById = (values) => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuestionDetailsById`, {params: values, headers: authHeader() });
 };
 export const GetTotalQuizzAttemptList = (values) => {
-	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetTotalQuizzAttemptList`, {params: values, headers: authHeader() });
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetTotalQuizzAttemptList?QuizNo=${values}`,{ headers: authHeader() });
 };
