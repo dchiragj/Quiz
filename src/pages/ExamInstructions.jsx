@@ -74,7 +74,7 @@ function ExamInstructions() {
                 <li>
                   Use "Mark for Review" for questions to be reviewed later.
                 </li>
-                <li>
+                {/* <li>
                   Color-coded status:
                   <div
                     className="my-2 p-2 border rounded"
@@ -106,7 +106,7 @@ function ExamInstructions() {
                   >
                     Grey: Not attempted questions
                   </div>
-                </li>
+                </li> */}
                 <li>Ensure that the camera is on during the examination.</li>
                 <li>Give required permissions for camera and microphone.</li>
                 <li>

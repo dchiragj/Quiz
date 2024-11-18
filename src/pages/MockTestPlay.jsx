@@ -35,6 +35,7 @@ const MockTestPlay = () => {
   };
   const Time = location.state?.studentData.examTime;
   const [timeLeft, setTimeLeft] = useState(parseTimeToSeconds(Time));
+  const [timerId, setTimerId] = useState(null);
   // const StudentClas = JSON.parse(localStorage.getItem("user")) || {}
   const Quiz = {
     QuizNo: studentData
@@ -65,6 +66,7 @@ const MockTestPlay = () => {
         return prev - 1;
       });
     }, 1000);
+    setTimerId(timerId); // Store the timer ID
     return () => clearInterval(timerId);
   }, []);
 
@@ -95,15 +97,17 @@ const MockTestPlay = () => {
   };
 
   const handleSubmit = async () => {
+    if (timerId) {
+      clearInterval(timerId);
+    }
     try {
       const answers = selectedAnswers.map((x) => ({
         questionId: x.questionId,
         selectedAnswer: x.selectedAnswer?.answerKey,
         quizNo: studentData,
-        // classNo: StudentClas.classId
-      }));
+        timeLeft: formatTime(timeLeft)
+      }));    
       const saveResponse = await SaveQuizAnswer(answers);
-      console.log("SaveQuizAnswer response:", saveResponse?.data);
       if (saveResponse?.data?.data.quizNo && saveResponse?.data?.data.attemptId) {
         const Quiz = {
           QuizNo: saveResponse.data.data.quizNo,
@@ -343,10 +347,10 @@ const MockTestPlay = () => {
           ))}
           <div ref={chatEndRef} />
           {question?.data?.length > currentQuestionIndex && (
-            <Box sx={{ marginBottom: 3 }}>
-              <Typography variant="body1" sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ marginBottom: 3}}>
+              <Typography variant="body1" sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center', gap: 1, flexWrap: 'wrap' ,bgcolor:'#E5E4E2', borderRadius:2 ,padding:1}}>
                 {createdBy(`${currentQuestionIndex + 1}. ${question.data[currentQuestionIndex]?.qText}`, "bot")}
-                <div
+                <div 
                   // variant="outlined"
                   color="primary"
                   onClick={() => handleRefreshQuestion(question.data[currentQuestionIndex]?.questionId)}

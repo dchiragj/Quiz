@@ -158,37 +158,47 @@ const MockTest = () => {
       {
         attempts?.map((value, index) => {
           return (
-            <Card key={index} className="m-3 border  rounded">
-              <div className="w-100 d-flex justify-content-start align-items-center">
-                <div variant="h2">
-                  {/* <img src={icons} width={"40px"} className="p-1" /> */}
-                  <Avatar sx={{ bgcolor: blue[700] }} className="m-1">MT</Avatar>
-                  {/* <FaUserCircle fontSize={40} className="p-1"  /> */}
+            <Card key={index} className="m-3 border rounded p-1">
+              <div className="d-flex align-items-center justify-content-between">
+                {/* Left Section: Avatar (Centered Vertically) */}
+                <div className="text-center">
+                  <Avatar sx={{ bgcolor: blue[700] }} className="m-1">
+                    MT
+                  </Avatar>
                 </div>
-                <div className="w-100 d-flex flex-column justify-content-between ml-4 gy-5">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h6>
-                      Mock Test
-                    </h6>
-
-                    <span style={{ fontSize: "11px" }}>{value?.examDate
-                      ? moment(value?.examDate).format('DD/MM/YYYY')
-                      : ""}</span>
-                    <span style={{ color: "black" }} onClick={() => handleClickOpen(value.quizNo, value.attemptId)}><HiDotsVertical /></span>
+                {/* Middle Section: Details */}
+                <div className="flex-grow-1 mx-3">
+                  <div className="d-flex justify-content-between">
+                    <h6 className="mb-1">Mock Test</h6>
+                    <p className="mb-0" style={{ fontSize: "11px" }}>
+                      {value?.examDate ? moment(value.examDate).format("DD/MM/YYYY") : ""}
+                    </p>
                   </div>
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-between">
                     <Typography variant="body2" color="#4A4AFF">
-                      {`Attempt ${index + 1}`}
+                      Attempt {index + 1}
                     </Typography>
+                    <p className="mb-0" style={{ fontSize: "11px" }}>
+                      {value?.totalExamTime}
+                    </p>
                   </div>
+                </div>
+                {/* Right Section: Action Icon */}
+                <div className="text-center">
+                  <HiDotsVertical
+                    style={{ color: "black", cursor: "pointer" }}
+                    onClick={() => handleClickOpen(value.quizNo, value.attemptId)}
+                  />
                 </div>
               </div>
             </Card>
+
+
           )
         })
       }
       <div>
-      <TabsCom/>
+        <TabsCom />
       </div>
       <Dialog
         open={open}
@@ -215,7 +225,7 @@ const MockTest = () => {
         </DialogContent>
         <div className="text-center border-top mb-2">
           <Button variant="contained" className="mt-2"
-                color="primary" onClick={handleClose}>close</Button>
+            color="primary" onClick={handleClose}>close</Button>
         </div>
       </Dialog>
 
