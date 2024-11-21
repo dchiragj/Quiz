@@ -18,6 +18,9 @@ import { useState } from 'react';
 import Sidebar from './pages/Offcanvas';
 import FeedBackForm from './pages/FeedBackForm';
 import Videoplay from './pages/Videoplay';
+import Details from './pages/Details';
+import TabsCom from './components/Tabs';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
@@ -34,6 +37,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/studentlogin" element={<AuthProvider><StudentLogin /></AuthProvider>} />
         <Route path="/otp" element={<AuthProvider><OtpVerification /></AuthProvider>} /> */}
+        <Route path="/details" element={<AuthProvider><Details isOpen={isOpen} setIsOpen={setIsOpen}/></AuthProvider>} />
         <Route path="/studentdetails" element={<AuthProvider><StudentDetails isOpen={isOpen} setIsOpen={setIsOpen}  user={user} setUser={setUser}/></AuthProvider>} />
         <Route path="/mocktest" element={<AuthProvider><MockTest /></AuthProvider>} />
         <Route path="/mocktestplay" element={<AuthProvider><MockTestPlay /></AuthProvider>} />
@@ -58,6 +62,7 @@ function App() {
         pauseOnHover
         theme="colored"
       />
+      <TabsCom/>
     </>
   );
 }

@@ -237,7 +237,7 @@ const MockTestPlay = () => {
   }, [])
   return (
     // style={{ backgroundImage: `url(${Chatimg})`,}}
-    <div className="backgroundImage">
+    <div className="backgroundImage" style={{marginBottom:'70px'}}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>

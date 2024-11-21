@@ -197,9 +197,9 @@ const MockTest = () => {
           )
         })
       }
-      <div>
+      {/* <div>
         <TabsCom />
-      </div>
+      </div> */}
       <Dialog
         open={open}
         onClose={handleClose}

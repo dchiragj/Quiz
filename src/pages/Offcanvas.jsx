@@ -17,6 +17,10 @@ function Sidebar({ isOpen, setIsOpen, user }) {
         setIsOpen(false);  // Close the Sidebar
         navigate("/studentlogin?message=logout");  // Navigate to login page with a message parameter
     };
+    const handelnaviget = () => {
+        navigate("/studentdetails");
+        setIsOpen(false)
+    }
 
     return (
         <>
@@ -29,9 +33,9 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                         <div className='d-flex justify-content-between align-items-center border-bottom pb-3 mb-3'>
                             <div className='d-flex justify-content-start align-items-center gap-3  ' >
                                 <Avatar sx={{ bgcolor: deepPurple[500] }}><FaRegUserCircle /></Avatar>
-                                <p style={{ paddingTop: '13px' }}>{user?.userName}</p>
+                                <p style={{ paddingTop: '13px' }}>User Profile</p>
                             </div>
-                            <FaChevronRight fontSize={25} onClick={() => setIsOpen(false)} />
+                            <FaChevronRight fontSize={25} onClick={handelnaviget} />
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 mb-3 border-bottom pb-3'>
                             <div ><CiBookmark fontSize={30} /></div>

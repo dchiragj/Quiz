@@ -62,7 +62,7 @@ const FeedBackForm = () => {
     );
 
   return (
-    <div>
+    <div style={{marginBottom:'80px'}}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
@@ -83,7 +83,7 @@ const FeedBackForm = () => {
           </Toolbar>
         </AppBar>
       </Box>
-      <div className='border border-primary rounded m-2'>
+      <div className='border border-primary rounded m-2' >
       {feedbackDetails.map((questionItem,index) => (
         <div key={questionItem.id} style={{  paddingLeft:"20px",paddingRight:"20px", paddingTop:'10px' }}>
           <h6>{index + 1}){questionItem.questionText}</h6>

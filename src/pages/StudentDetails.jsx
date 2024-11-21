@@ -31,12 +31,12 @@ import { div } from "@tensorflow/tfjs";
 // import { AuthContext } from "./context/AuthContext";
 
 function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
-  const urlSearchString = window. location.search; 
-  const params = new URLSearchParams(urlSearchString);
-  const tokenString = params.get("token")
-  if (tokenString) {
-    localStorage.setItem('tokenGet', tokenString);
-  }
+  // const urlSearchString = window. location.search; 
+  // const params = new URLSearchParams(urlSearchString);
+  // const tokenString = params.get("token")
+  // if (tokenString) {
+  //   localStorage.setItem('tokenGet', tokenString);
+  // }
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
       }
     } catch (error) {
       console.log("error-->", error);
-      // setIsLoading(true)/
+      // setIsLoading(true)
 
     }
   }
@@ -123,7 +123,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
         <Grid className="m-2">
           {/* Student Details Section */}
           <Grid item xs={12}>
-            <Card className="border border-primary rounded">
+            <Card className="border border-primary rounded" style={{marginBottom:"80px"}}>
               <CardContent>
                 <Typography variant="h5" color="primary" className="mb-3">
                   Student Details

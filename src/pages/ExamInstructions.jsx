@@ -25,7 +25,7 @@ function ExamInstructions() {
     setIsChecked(!isChecked);
   };
   return (
-    <div>
+    <div style={{marginBottom:"80px"}}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
