@@ -17,7 +17,7 @@ const TabsCom = () => {
     useEffect(() => {
         if (location.pathname === '/details') {
             setValue(0);
-        } else if (location.pathname === '/mocktest') {
+        } else if (location.pathname === '/studentdetails') {
             setValue(1);
         } 
     }, [location.pathname]);
@@ -26,7 +26,7 @@ const TabsCom = () => {
         if (newValue === 0) {
             navigate('/details');
         } else if (newValue === 1) {
-            navigate('/mocktest');
+            navigate('/studentdetails');
         } 
     };
 

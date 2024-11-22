@@ -62,6 +62,9 @@ export const GetURLAndStandardDetails = () => {
 export const GetQuestionDetailsById = (values) => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuestionDetailsById`, {params: values, headers: authHeader() });
 };
-export const GetTotalQuizzAttemptList = (values) => {
-	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetTotalQuizzAttemptList?QuizNo=${values}`,{ headers: authHeader() });
+export const GetTotalQuizzAttemptList = () => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetTotalQuizzAttemptList`,{ headers: authHeader() });
+};
+export const PdfURL = (values) => {
+	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/PdfURL?Flag=${values}`,{ headers: authHeader() });
 };

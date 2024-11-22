@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { GetQuestionDetailsById, GetQuizResult, QuizQuestionsList, SaveQuizAnswer } from "../common/getdata";
 import { div } from "@tensorflow/tfjs";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoIosSave, IoMdArrowRoundBack } from "react-icons/io";
 import { Col, Row } from "react-bootstrap";
 import { FcClock } from "react-icons/fc";
 import { toast } from "react-toastify";
@@ -247,13 +247,13 @@ const MockTestPlay = () => {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              onClick={saveAndExit}
+              // onClick={saveAndExit}
             >
-              <IoMdArrowRoundBack color="#000000" />
+              {/* <IoMdArrowRoundBack color="#000000" /> */}
             </IconButton>
 
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Mock Test Play
+            PRACTICE TEST
             </Typography>
             <div style={{ color: 'black' }}>
               <div className="text-end d-flex justify-content-end align-items-center mr-2">Mock Test Time</div>
@@ -409,28 +409,29 @@ const MockTestPlay = () => {
               justifyContent: "center",
             }}
           >
-            <Box sx={{ backgroundColor: "white", padding: 3, borderRadius: 2, width: '85%' }}>
-              <Typography variant="h6" gutterBottom className="border-bottom">
+            <Box sx={{ backgroundColor: "white", borderBottomLeftRadius: 20,borderBottomRightRadius: 20 , width: '85%' }}>
+              <h5 variant="h6" gutterBottom className="border-bottom text-center bg-primary p-3">
                 Your Assessment Summary
-              </Typography>
-
-              <div className="d-flex justify-content-start align-items-center">
-                <div style={{ color: "#1976d2" }}>Total:</div>
+              </h5>
+              <div className="p-3">
+              <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1">
+                <div style={{ fontWeight: 600 }}>Total:</div>
                 <div>{result?.data?.totalQuestion}</div>
               </div>
-              <div className="d-flex justify-content-start align-items-center">
-                <div style={{ color: "#1976d2" }}>Correct:</div>
-                <div>{result?.data?.correctQuestion}</div>
+              <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1 mt-2">
+                <div style={{ fontWeight: 600 }}>Correct:</div>
+                <div>{result?.data?.answeredQuestion}</div>
               </div>
-              <div className="d-flex justify-content-start align-items-center border-bottom">
-                <div style={{ color: "#1976d2" }}>Percentage:</div>
+              <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1 mt-2">
+                <div style={{ fontWeight: 600 }}>Percentage:</div>
                 <div>{result?.data?.percentage}</div>
               </div>
-              {/* <Typography >Total: {result?.data?.totalQuestion}</Typography>
-            <Typography>Correct: {result?.data?.correctQuestion}</Typography>
-            <Typography className="border-bottom">Percentage: {result?.data?.percentage}</Typography> */}
-              <Row className="text-start border-bottom">
-                <Col>
+              <div style={{color:'red',fontSize:11}} >
+                <div>* You will now be redirected to the Feedback Page. Kindly share your feedback based on your experience!</div>
+              </div>
+              </div>
+              {/* <Row className="text-start border-bottom"> */}
+                {/* <Col>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -441,31 +442,36 @@ const MockTestPlay = () => {
                     }
                     label="Click on the Checkbox Before Submitting your Answer"
                   />
-                </Col>
-              </Row>
-              <Button
+                </Col> */}
+              {/* </Row> */}
+              {/* <Button
                 onClick={() => {
                   setIsResultModel(false);
-                  // navigate("/mocktest");
                 }}
                 variant="outlined"
                 color="primary"
                 sx={{ mt: 2, mr: 2 }}
               >
                 Close
-              </Button>
-              <Button
+              </Button> */}
+              <div className="d-flex justify-content-center gap-2">
+              <Button 
                 onClick={() => {
                   setIsResultModel(false);
                   navigate("/feedback");
                 }}
-                disabled={!isChecked}
+                // disabled={!isChecked}
                 variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
+                sx={{ 
+                  mb: 1, 
+                  backgroundColor: '#07329d', 
+                  '&:hover': { backgroundColor: '#052a80' } // Optional hover effect
+                }}
               >
+                <IoIosSave fontSize={20} color="#ffffff"/>
                 Save & Exit
               </Button>
+              </div>
             </Box>
           </Box>
         )}

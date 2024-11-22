@@ -15,15 +15,9 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoMdMenu } from "react-icons/io";
-import { Col, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { GetUserDetails } from "../common/getdata";
 import moment from 'moment';
-import { Token } from "@mui/icons-material";
-import { div } from "@tensorflow/tfjs";
-
-
-
 // import navbarlogo from "../assets/studentlogin.png";
 // import { FaRegUserCircle } from "react-icons/fa";
 // import user from "../assets/user-image.jpg";
@@ -31,6 +25,7 @@ import { div } from "@tensorflow/tfjs";
 // import { AuthContext } from "./context/AuthContext";
 
 function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
   // const urlSearchString = window. location.search; 
   // const params = new URLSearchParams(urlSearchString);
   // const tokenString = params.get("token")
@@ -59,7 +54,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
     setIsChecked(!isChecked);
   };
   useEffect(() => {
-    GetprofileDetails()
+    // GetprofileDetails()
   }, [])
   const GetprofileDetails = async () => {
     setIsLoading(true)
@@ -83,7 +78,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
   }
 
   return (
-    <div>
+    <div className="offcanvas-bg" style={{marginBottom:"72px"}}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
@@ -98,7 +93,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
               <IoMdMenu fontSize="30px" style={{ color: "#000000" }} />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Student Details
+            STUDENT PROFILE
             </Typography>
             {/* <div className="d-flex justify-content-between align-items-center gap-4"> */}
             {/* <a className="navbar-brand" href="#">
@@ -118,86 +113,125 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           </Toolbar>
         </AppBar>
       </Box>
-      {isLoading ? <div className="text-center mt-5"><CircularProgress size={40} style={{ color: "black" ,}} /></div>  : <div>
-        {/* // <Box sx={{ maxWidth: '900px', margin: 'auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}> */}
+      <div className="m-2 mt-5">
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
+          <div>{storedUser?.candidate_Name}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>FATHER NAME</div>
+          <div>{storedUser?.fatherName}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>Gender</div>
+          <div>{storedUser?.gender}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>SCHOOL NAME</div>
+          <div>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
+          <div>{storedUser?.enrollmentNo}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>CLASS</div>
+          <div>{storedUser?.classId}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>DATE OF BIRTH</div>
+          <div> {storedUser?.dateOfBirth ? moment(storedUser.dateOfBirth).format('DD/MM/YYYY') : ""}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>MOBILE NUMBER</div>
+          <div>{storedUser?.mobileNo}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>EMAIL ID</div>
+          <div>{storedUser?.emailId}</div>
+        </div>
+        <div className="d-flex justify-content-center ">
+          <img src={`data:image/jpeg;base64,${storedUser?.userImage}`} alt="Student" width={200} height={150}/>
+        </div>
+
+      </div>
+      {/* {isLoading ? <div className="text-center mt-5"><CircularProgress size={40} style={{ color: "black", }} /></div> : <div className="">
         <Grid className="m-2">
-          {/* Student Details Section */}
           <Grid item xs={12}>
-            <Card className="border border-primary rounded" style={{marginBottom:"80px"}}>
+            <Card className="border border-primary rounded" style={{ marginBottom: "80px" }}>
               <CardContent>
                 <Typography variant="h5" color="primary" className="mb-3">
                   Student Details
                 </Typography>
-                {/* <hr /> */}
+
                 <table className="w-100">
                   <tbody>
                     <tr className=" border-top border-bottom">
                       <td className="py-1 ">
                         <strong>Student Name</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.candidate_Name}</td>
+                      <td align="right">{storedUser?.candidate_Name}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Father's Name</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.fatherName}</td>
+                      <td align="right">{storedUser?.fatherName}</td>
                     </tr>
                     <tr className=" border-top border-bottom">
                       <td className="py-1" >
                         <strong>Enrollment No</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.enrollmentNo}</td>
+                      <td align="right">{storedUser?.enrollmentNo}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Class</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.classId}</td>
+                      <td align="right">{storedUser?.classId}</td>
                     </tr>
                     <tr className=" border-top border-bottom">
                       <td className="py-1">
                         <strong>D.O.B</strong>{" "}
                       </td>
-                      <td align="right">  {ProfileDetails?.dateOfBirth
-                        ? moment(ProfileDetails.dateOfBirth).format('DD/MM/YYYY')
+                      <td align="right">  {storedUser?.dateOfBirth
+                        ? moment(storedUser.dateOfBirth).format('DD/MM/YYYY')
                         : ""}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Mobile Number</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.mobileNo}</td>
+                      <td align="right">{storedUser?.mobileNo}</td>
                     </tr>
                     <tr className=" border-top border-bottom">
                       <td className="py-1">
                         <strong>Gender</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.gender}</td>
+                      <td align="right">{storedUser?.gender}</td>
                     </tr>
                     <tr>
                       <td className="py-1">
                         <strong>Email ID</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.emailId}</td>
+                      <td align="right">{storedUser?.emailId}</td>
                     </tr>
                     <tr className=" border-top border-bottom ">
                       <td className="py-1">
                         <strong>School Name</strong>
                       </td>
-                      <td align="right">{ProfileDetails?.schoolName}</td>
+                      <td align="right">{storedUser?.schoolName}</td>
                     </tr>
                   </tbody>
                 </table>
-                <div className="container">
-                  <div className="row  ">
-                    <img src={`data:image/jpeg;base64,${ProfileDetails?.userImage}`} alt="Student" className="w-25 col" />
-                    <img src={`data:image/jpeg;base64,${ProfileDetails?.userIdentityCard}`} alt="Document" className="w-25 col" />
+                <div className="container mt-4">
+                  <div className="d-flex justify-content-center">
+                    <img src={`data:image/jpeg;base64,${storedUser?.userImage}`} alt="Student" className="w-50" />
                   </div>
                 </div>
-                {/* Declaration Checkbox */}
+              
                 <Row className="w-100">
-                  {/* <Col> */}
+               
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -208,12 +242,12 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
                     }
                     label="I hereby declare that the above information is true and correct."
                   />
-                  {/* </Col> */}
+               
                 </Row>
                 <div className="text-center">
                   <Button
                     variant="contained"
-                    // color="bule"
+                    
                     disabled={!isChecked}
                     style={{ fontWeight: "bold" }}
                     onClick={() => navigate("/examintroduction")}
@@ -226,7 +260,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           </Grid>
         </Grid>
 
-      </div>}
+      </div>} */}
     </div>
   );
 }
