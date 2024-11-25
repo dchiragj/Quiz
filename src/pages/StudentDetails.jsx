@@ -78,7 +78,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
   }
 
   return (
-    <div className="offcanvas-bg" style={{marginBottom:"72px"}}>
+    <div className="offcanvas-bg" style={{ marginBottom: "72px" }}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar>
@@ -93,7 +93,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
               <IoMdMenu fontSize="30px" style={{ color: "#000000" }} />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            STUDENT PROFILE
+              STUDENT PROFILE
             </Typography>
             {/* <div className="d-flex justify-content-between align-items-center gap-4"> */}
             {/* <a className="navbar-brand" href="#">
@@ -123,7 +123,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           <div>{storedUser?.fatherName}</div>
         </div>
         <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>Gender</div>
+          <div style={{ fontWeight: 600 }}>GENDER</div>
           <div>{storedUser?.gender}</div>
         </div>
         <div className='profilecom'>
@@ -150,8 +150,8 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           <div style={{ fontWeight: 600 }}>EMAIL ID</div>
           <div>{storedUser?.emailId}</div>
         </div>
-        <div className="d-flex justify-content-center ">
-          <img src={`data:image/jpeg;base64,${storedUser?.userImage}`} alt="Student" width={200} height={150}/>
+        <div className="d-flex justify-content-center" >
+        <img src={storedUser?.userImage} alt="Student" width={200} height={150} />
         </div>
 
       </div>

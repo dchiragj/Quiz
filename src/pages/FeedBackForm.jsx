@@ -48,7 +48,7 @@ const FeedBackForm = () => {
       const response = await SaveFeedBackFormDetails(payload);
       if (response.data.status) {
         toast.success(response.data.message);
-        navigate('/mocktest');
+        navigate('/details');
       } else {
         toast.error(response.data.message);
       }
@@ -86,7 +86,7 @@ const FeedBackForm = () => {
       <div className='border border-primary rounded m-2' >
       {feedbackDetails.map((questionItem,index) => (
         <div key={questionItem.id} style={{  paddingLeft:"20px",paddingRight:"20px", paddingTop:'10px' }}>
-          <h6>{index + 1}){questionItem.questionText}</h6>
+          <h6>{index + 1}.{questionItem.questionText}</h6>
           {questionItem.option.map((opt) => (
             <div key={opt.qValue}>
               <label>

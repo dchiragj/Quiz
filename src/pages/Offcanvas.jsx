@@ -36,7 +36,7 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                     </Offcanvas.Header>
                     <Offcanvas.Body >
                         <div className='text-center'>
-                            <img src={`data:image/jpeg;base64,${storedUser?.userImage}`} width={100} height={100} className="rounded-circle" />
+                            <img src={storedUser?.userImage} width={100} height={100} className="rounded-circle" />
                             <div>{storedUser?.candidate_Name}</div>
                             <div>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
                         </div>

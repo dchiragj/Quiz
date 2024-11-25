@@ -95,9 +95,16 @@ code {
 .carousel-indicators button {
   background-color: black !important;
 }
+.carousel-indicators [data-bs-target] {
+  margin-right: 5px !important;
+  width: 11px !important;
+}
 .comtest{
-  font-size: small;
-  font-weight: bold;
+  font-weight: 700;
+  font-style: normal;
+  font-kerning: none;
+  text-decoration: none;
+  font-size: 13px;
 }
 .swiper-pagination-bullet {
   background-color: #01579b;
