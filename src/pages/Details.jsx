@@ -1,38 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import { AppBar, Avatar, CardActions, Toolbar } from "@mui/material";
-import kamlogo from "../assets/kamplogo.png"
 import { Carousel, Toast } from "react-bootstrap";
-import { FaBookOpenReader, FaFileCircleCheck, FaListCheck, FaPaperPlane } from "react-icons/fa6";
-import { blue, brown, deepOrange, green, orange, purple, red, yellow } from "@mui/material/colors";
-import { BsBoxes, BsClipboard2CheckFill } from "react-icons/bs";
-import { IoInvertMode, IoNewspaper } from "react-icons/io5";
-import { MdOutlineAirplanemodeActive, MdOutlineIntegrationInstructions, MdSubject } from "react-icons/md";
-import { FaRobot, FaSearch } from "react-icons/fa";
-import { RiTeamLine } from "react-icons/ri";
-import { CiFaceSmile } from "react-icons/ci";
-import { PiFilesBold, PiSmileySadBold } from "react-icons/pi";
-import { CgSmileNone } from "react-icons/cg";
-import { FiCheckSquare } from "react-icons/fi";
-import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
-import { FaWhatsapp } from "react-icons/fa6";
+import { FaBookOpenReader, FaDownload, FaListCheck, FaPaperPlane } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
+import { RiSurveyLine, RiTeamLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import banner from "../assets/banner.png"
-import { IoMdMenu } from "react-icons/io";
+import { IoMdCloudDownload, IoMdMenu } from "react-icons/io";
 import { GiNotebook, GiTeacher } from "react-icons/gi";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { GetTotalQuizzAttemptList, GetUserDetails, PdfURL, QuizQuestionsList } from "../common/getdata";
 import { AuthContext } from "./context/AuthContext";
 import { toast } from "react-toastify";
-import { HiOutlineAcademicCap } from "react-icons/hi";
 import kamplogo from "../assets/kamplogo.png";
+import { saveAs } from 'file-saver';
+import { RxCross1 } from "react-icons/rx";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 const Details = ({ isOpen, setIsOpen, setUser }) => {
@@ -42,6 +29,11 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
     const [userDetails, setUserDetails] = useState({});
     const urlSearchString = window.location.search;
     const params = new URLSearchParams(urlSearchString);
+    const [pdfUrl, setPdfUrl] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [showIframe, setShowIframe] = useState(false);
+
+    const [showMessage, setShowMessage] = useState(false);
     const tokenString = params.get("token")
     if (tokenString) {
         localStorage.setItem('tokenGet', tokenString);
@@ -51,8 +43,45 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
         setIsPracticeTestVisible(!isPracticeTestVisible); // Toggle visibility
     };
     const handleRedirect = () => {
-        window.location.href = 'https://kamp.org.in/lesform';
-    }    
+        window.location.href = 'https://kamp.org.in/lesform?e=2210100809';
+    }
+    const downloadPdf = (pdfUrl) => {
+        alert(pdfUrl)
+        if (!pdfUrl) {
+            alert('PDF URL is not available');
+            return;
+        }
+        try {
+            // Create an anchor element to trigger the download
+            const downloadLink = document.createElement("a");
+            const fileName = 'randomAppName.apk';
+            downloadLink.href = pdfUrl;
+            downloadLink.rel = 'noreferrer'
+            downloadLink.download = fileName;
+            console.log("downloadLink: ", downloadLink)
+            alert("downloadLink: ", downloadLink)
+            downloadLink.click();
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+            alert('Failed to download the PDF. Please try again.');
+        }
+    };
+
+    // Simulate login success - Replace this with your actual login logic
+    useEffect(() => {
+        const loginSuccess = true; // Replace this with the actual login success condition
+        if (loginSuccess) {
+            setShowMessage(true); // Show message when login is successful
+        }
+    }, []);
+
+    // Hide the message after 5 seconds
+    useEffect(() => {
+        if (showMessage) {
+            const timer = setTimeout(() => setShowMessage(false), 5000);
+            return () => clearTimeout(timer); // Cleanup the timer
+        }
+    }, [showMessage]);
     const attemptsdata = attempts.map((item, index) => ({
         attempt: `Attempt ${index + 1}`,
         total: item.totalQuestion,
@@ -90,7 +119,7 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
             const response = await QuizQuestionsList(parameters);
             setMockTestData(response.data);
             if (response.data.status) {
-                toast.success(response.data.message);
+                // toast.success(response.data.message);
                 localStorage.setItem("quizNo", JSON.stringify(response.data.examdetails.quizNo))
                 navigate("/mocktestplay", {
                     state: { studentData: response.data.examdetails },
@@ -131,17 +160,36 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
         }
     }
     const GetPdfURL = async (flag) => {
+        // alert(flag)
         try {
-            const response = await PdfURL(flag);
+            setLoading(true);
+            const response = await PdfURL(flag); // Fetch the URL from API
             if (response.data.data && response.data.data._PdfURL) {
-                window.open(response.data.data._PdfURL, "_blank");
+                console.log(response.data.data);
+
+                const fetchedPdfUrl = response.data.data._PdfURL;
+                window.location.href = `${window.location.origin}${window.location.pathname}?pdfUrl=${fetchedPdfUrl}`;
+                // setPdfUrl(fetchedPdfUrl); // Set the fetched URL
+
+                // Open the PDF URL in a new tab
+                // window.open(fetchedPdfUrl, '_blank');
             } else {
-                toast.error("PDF not available for this class.");
+                alert('PDF not available for this class.');
+                setLoading(false);
             }
         } catch (error) {
-            console.log("Error fetching PDF URL:", error);
+            console.error('Error opening PDF URL:', error);
+            alert('Failed to fetch PDF. Please try again.');
+            setLoading(false);
         }
-    }
+    };
+
+    const pdfUrltest = "https://quizb.clustersofttech.com/pdf/Assessment_Guidelines.pdf";
+
+    const openInNewTab = () => {
+        alert(pdfUrltest)
+        window.open(pdfUrltest, "_blank");
+    };
     useEffect(() => {
         handleAttemptList()
         GetprofileDetails()
@@ -149,9 +197,9 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
     return (
 
         <div style={{ marginBottom: '80px' }}>
-            <Box className="w-100" style={{backgroundColor:'white'}}>
+            <Box className="w-100" style={{ backgroundColor: 'white' }}>
                 <AppBar position="static">
-                    <Toolbar className="d-flex justify-content-center align-items-center" style={{backgroundColor:'white'}}>
+                    <Toolbar className="d-flex justify-content-center align-items-center" style={{ backgroundColor: 'white' }}>
                         <IconButton
                             size="large"
                             edge="start"
@@ -162,20 +210,24 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                         >
                             <IoMdMenu fontSize="30px" style={{ color: "#000000" }} />
                         </IconButton>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: 12, textAlign: "center",color:'black' }}>
-                            KNOWLEDGE AND AWARENESS MAPPING PLATFORM (KAMP)
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: 12, textAlign: "center", color: 'black' }}>
+                            KNOWLEDGE AND AWARENESS MAPPING PLATFORM
                         </Typography>
                         <div className=" ">
-                            <img src={kamplogo} alt="" style={{ width: 60, height: 60, color:'blue' }} />
+                            <img src={kamplogo} alt="" style={{ width: 75, height: 40, color: 'blue' }} />
                         </div>
                     </Toolbar>
                 </AppBar>
             </Box>
-            <div style={{ backgroundColor: "#f3f0f6" }}>
-
+            <div style={{ backgroundColor: "#f3f0f6", backgroundSize: "cover", backgroundPosition: "center" }}>
+                {/* {showMessage && (
+                    <div className="m-2" style={{ color: 'green' }}>
+                        Welcome! You have successfully logged in.
+                    </div>
+                )} */}
                 {/* Welcome Text */}
                 <div className="m-2 font-weight-bold">
-                    Hi {userDetails?.candidate_Name}
+                    Hi, {userDetails?.candidate_Name}
                 </div>
 
                 {/* Search Bar */}
@@ -219,32 +271,59 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                     </Carousel.Item>
                 </Carousel> */}
                 {/* Section Titles and Cards */}
-                <h6 className="text-center p-2 m-2 mt-3" style={{ backgroundColor: '#cd3c81', borderRadius: 4, margin: 7, color: '#f7f0fa' }}>National Assessment of Scientific Temperament & Aptitude (NASTA)</h6>
+
+                {/* <button type="button" style={{ backgroundColor: '#8c52ff', borderRadius: 5, marginBottom: 5, color: "#ffffff", border: '1px solid #282426' }} onClick={openInNewTab} >Click Here</button> */}
+                {/* <a href={pdfUrltest} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: '#8c52ff', borderRadius: 5, marginBottom: 5, color: "#ffffff", border: '1px solid #282426' }}>cilck here</a> */}
+                <div className="text-center p-2 m-2 mt-3 fw-bolder" style={{ backgroundColor: '#cd3c81', borderRadius: 4, margin: 7, color: '#f7f0fa' }}>National Assessment of Scientific Temperament & Aptitude</div>
                 <div className="d-flex flex-column align-items-center mx-2 mt-4">
+                    <div id="pdf-iframe-container" style={{ width: '100%', height: '80vh', display: "none" }}></div>
                     <div className="row p-0  w-100 gap-4">
-                        <Card className="col" style={{ backgroundColor: '#e4dbfc',padding:'5px' }}>
-                            <div className=" d-flex justify-content-center align-items-center gap-1">
-                                <div><FaBookOpenReader  fontSize="30px" color="#8d52fe" /></div>
-                                <div className="comtest" style={{ color: '#8d52fe' }}>NASTA PATTERN TEST</div>
+                        <Card className="col" style={{ backgroundColor: '#e4dbfc', padding: '10px' }} onClick={handleMockTestPlayButton}>
+                            <div className=" d-flex flex-column justify-content-center align-items-center gap-2 text-center">
+                                <div><FaBookOpenReader fontSize="30px" color="#8d52fe" /></div>
+                                <div className="comtest" style={{ color: '#8d52fe' }}>PRACTICE TEST</div>
                             </div>
-                            <button type="button" style={{ backgroundColor: '#8c52ff', borderRadius: 5, marginBottom: 5, border: 'none', color: "#ffffff" }} onClick={handleMockTestPlayButton}>Click Here</button>
+                            {/* <button type="button" style={{ backgroundColor: '#8c52ff', borderRadius: 5, marginBottom: 5, color: "#ffffff", border: '1px solid #282426' }} onClick={handleMockTestPlayButton} >Click Here</button> */}
                         </Card>
-                        <Card className="col" style={{ backgroundColor: '#f1e0f0',padding:'10px' }}>
-                            <div className=" d-flex justify-content-center align-items-center gap-1">
+                        <Card className="col" style={{ backgroundColor: '#f1e0f0', padding: '10px' }} onClick={() => GetPdfURL("Guid")}>
+                            <div className=" d-flex justify-content-center align-items-center gap-2 flex-column text-center">
                                 <div><GiTeacher fontSize="30px" color="#cf3d81" /></div>
-                                <div className="comtest" style={{ color: '#cf3d81' }}>GUIDELINES FOR NASTA 2024</div>
+                                <div className="comtest" style={{ color: '#cf3d81' }}>GUIDELINES FOR 2024</div>
                             </div>
-                            <button type="button" style={{ backgroundColor: '#cd3c81', borderRadius: 5, border: 'none', color: "#ffffff" }} onClick={() => GetPdfURL("Guid")}>Click Here</button>
+                            {/* <button type="button" style={{ backgroundColor: '#cd3c81', borderRadius: 5, border: 'none', color: "#ffffff", border: '1px solid #282426' }} onClick={() => GetPdfURL("Guid")}>Click Here</button> */}
                         </Card>
-                        <Card className="col" style={{ backgroundColor: '#e6e3e5',padding:'10px' }}>
-                            <div className=" d-flex justify-content-center align-items-center gap-1">
+                        <Card className="col" style={{ backgroundColor: '#e6e3e5', padding: '10px' }} onClick={() => GetPdfURL("Paper")}>
+                            <div className=" d-flex justify-content-center align-items-center gap-2 flex-column text-center">
                                 <div><GiNotebook fontSize="30px" color="#735625" /></div>
-                                <div className="comtest" style={{ color: '#735625' }}>NASTA SAMPLE PARER</div>
+                                <div className="comtest" style={{ color: '#735625' }}>SAMPLE PAPER</div>
                             </div>
-                            <button type="button" style={{ backgroundColor: '#735625', borderRadius: 5, border: 'none', color: "#ffffff" }} onClick={() => GetPdfURL("Paper")}>Click Here</button>
+                            {/* <button type="button" style={{ backgroundColor: '#735625', borderRadius: 5, border: 'none', color: "#ffffff", border: '1px solid #282426' }} onClick={() => GetPdfURL("Paper")}>Click Here</button> */}
                         </Card>
                     </div>
-                    <div className="row p-0 w-100 gap-4 mt-3 ">
+                    <div className="row p-0  w-100 gap-4 mt-3">
+                        <Card className="col" style={{ backgroundColor: '#dcecea', padding: '10px' }} onClick={handleRedirect}>
+                            <div className=" d-flex justify-content-center align-items-center gap-2 flex-column text-center" style={{ marginBottom: "18px" }}>
+                                <div><RiSurveyLine fontSize="30px" color="#1ba553" /></div>
+                                <div className="comtest" style={{ color: '#1ba553' }}>LES FOR STUDENTS</div>
+                            </div>
+                            {/* <button type="button" style={{ backgroundColor: '#1ba553', borderRadius: 5, marginBottom: 5, color: "#ffffff", border: '1px solid #282426' }} onClick={handleRedirect} >Click Here</button> */}
+                        </Card>
+                        <Card className="col" style={{ backgroundColor: '#f4e7e4', padding: '10px' }} onClick={() => GetPdfURL("Syllabus")}>
+                            <div className=" d-flex justify-content-center align-items-center gap-2 flex-column text-center" style={{ marginBottom: "18px" }}>
+                                <div><FaListCheck fontSize="30px" color="#e45a04" /></div>
+                                <div className="comtest" style={{ color: '#e45a04' }}> SYLLABUS</div>
+                            </div>
+                            {/* <button type="button" style={{ backgroundColor: '#e77a1b', borderRadius: 5, border: 'none', color: "#ffffff", border: '1px solid #282426' }} onClick={() => GetPdfURL("Syllabus")}>Click Here</button> */}
+                        </Card>
+                        <Card className="col" style={{ backgroundColor: '#dae4f6', padding: '10px' }} onClick={handlePracticeTestClick}>
+                            <div className=" d-flex justify-content-center align-items-center gap-2 flex-column text-center" >
+                                <div><FaPaperPlane fontSize="30px" color="#2772c0" /></div>
+                                <div className="comtest" style={{ color: '#095fb8' }}>PRACTICE TEST SUMMARY</div>
+                            </div>
+                            {/* <button type="button" style={{ backgroundColor: '#095fb8', borderRadius: 5, border: 'none', color: "#ffffff", border: '1px solid #282426' }} onClick={handlePracticeTestClick}>Click Here</button> */}
+                        </Card>
+                    </div>
+                    {/* <div className="row p-0 w-100 gap-4 mt-3 ">
                         <Card className="col" style={{ backgroundColor: '#dcecea' }}>
                             <CardContent>
                                 <div className="d-flex justify-content-center align-items-center gap-1 h-75" >
@@ -270,9 +349,9 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                                 <div><FaPaperPlane fontSize="30px" color="#2772c0" /></div>
                                 <div className="comtest" style={{ color: '#095fb8' }}>PRACTICE TEST SUMMARY</div>
                             </div>
-                            <button type="button" style={{ backgroundColor: '#095fb8', borderRadius: 5, border: 'none', color: "#ffffff" }} onClick={handlePracticeTestClick}>Click Here</button>
+                            <button type="button" style={{ backgroundColor: '#095fb8', borderRadius: 5, border: 'none', color: "#ffffff"}} onClick={handlePracticeTestClick}>Click Here</button>
                         </Card>
-                    </div>
+                    </div> */}
                 </div>
                 {isPracticeTestVisible && (
                     <div className="m-2 border border-black mt-3">
@@ -306,18 +385,18 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                                                             {attemptsdata.attempt}
                                                         </div>
                                                         <div className="p-1">
-                                                            <div className="d-flex justify-content-between align-items-center attemptcom">
-                                                                <div>Total:</div>
+                                                            <div className="d-flex justify-content-between align-items-center ">
+                                                                <div className="attemptcom">Total Questions</div>
                                                                 <div>{attemptsdata.total}</div>
                                                             </div>
                                                             <hr className="mb-0 mt-0" />
-                                                            <div className="d-flex justify-content-between align-items-center attemptcom">
-                                                                <div>Correct:</div>
+                                                            <div className="d-flex justify-content-between align-items-center ">
+                                                                <div className="attemptcom">Total Correct</div>
                                                                 <div>{attemptsdata.correct}</div>
                                                             </div>
                                                             <hr className="mb-0 mt-0" />
-                                                            <div className="d-flex justify-content-between align-items-center attemptcom">
-                                                                <div>Percentage:</div>
+                                                            <div className="d-flex justify-content-between align-items-center ">
+                                                                <div className="attemptcom">Precentage</div>
                                                                 <div>{attemptsdata.percentage}</div>
                                                             </div>
                                                         </div>

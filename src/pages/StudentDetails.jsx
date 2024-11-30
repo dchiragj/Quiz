@@ -1,7 +1,6 @@
 import {
   AppBar,
   Box,
-  Button,
   Card,
   CardContent,
   Checkbox,
@@ -18,6 +17,11 @@ import { IoMdMenu } from "react-icons/io";
 import { toast } from "react-toastify";
 import { GetUserDetails } from "../common/getdata";
 import moment from 'moment';
+import photo from '../assets/photo.png';
+import { FaRegEdit } from "react-icons/fa";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 // import navbarlogo from "../assets/studentlogin.png";
 // import { FaRegUserCircle } from "react-icons/fa";
 // import user from "../assets/user-image.jpg";
@@ -39,6 +43,20 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
   const studentData = location.state?.studentData.userData;
   const [isChecked, setIsChecked] = useState(false);
   const [ProfileDetails, setProfileDetails] = useState();
+  const [show, setShow] = useState(false);
+  const [editField, setEditField] = useState(""); // Field to edit
+  const [editValue, setEditValue] = useState(""); // Value of the field being edited
+
+  const handleClose = () => setShow(false);
+  const handleShow = (field, value) => {
+    setEditField(field); // Set the field to edit
+    setEditValue(value); // Set the current value to edit
+    setShow(true);
+  };
+
+  const handleInputChange = (event) => {
+    setEditValue(event.target.value);
+  };
 
   // useEffect(() => {
   //   const timer = setTimeout(() => {
@@ -77,11 +95,16 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
     }
   }
 
+  const handleSaveChanges = async (field, value, key) => {
+    console.log(`Updated ${editField}:`, editValue);
+    handleClose();
+  }
+
   return (
     <div className="offcanvas-bg" style={{ marginBottom: "72px" }}>
       <Box className="w-100">
         <AppBar position="static">
-          <Toolbar>
+          <Toolbar className="d-flex justify-content-center align-items-center">
             <IconButton
               size="large"
               edge="start"
@@ -92,6 +115,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
             >
               <IoMdMenu fontSize="30px" style={{ color: "#000000" }} />
             </IconButton>
+            <img src={photo} width={40} height={40} style={{ marginRight: 10 }} />
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               STUDENT PROFILE
             </Typography>
@@ -113,10 +137,14 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           </Toolbar>
         </AppBar>
       </Box>
-      <div className="m-2 mt-5">
+      <div className="m-2 mt-4" style={{ padding: '20px', border: '1px solid #9f9393' }}>
+        <div className="d-flex justify-content-center mb-3" >
+          <img src={storedUser?.userImage} alt="Student" width={200} height={150} />
+        </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
           <div>{storedUser?.candidate_Name}</div>
+          {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>FATHER NAME</div>
@@ -150,10 +178,36 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
           <div style={{ fontWeight: 600 }}>EMAIL ID</div>
           <div>{storedUser?.emailId}</div>
         </div>
-        <div className="d-flex justify-content-center" >
-        <img src={storedUser?.userImage} alt="Student" width={200} height={150} />
-        </div>
+      </div>
 
+      <div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>STUDENT PROFILE EDIT</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Edit {editField.replace(/_/g, ' ')}</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editValue}
+                  onChange={handleInputChange}
+                  placeholder={`Enter ${editField.replace(/_/g, ' ')}`}
+                  autoFocus
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleSaveChanges}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
       {/* {isLoading ? <div className="text-center mt-5"><CircularProgress size={40} style={{ color: "black", }} /></div> : <div className="">
         <Grid className="m-2">

@@ -38,7 +38,7 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                         <div className='text-center'>
                             <img src={storedUser?.userImage} width={100} height={100} className="rounded-circle" />
                             <div>{storedUser?.candidate_Name}</div>
-                            <div>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
+                            <div className='border-bottom'>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
                         </div>
 
                         <div className='d-flex justify-content-between align-items-center border-bottom pb-3 mb-1'>
@@ -56,15 +56,15 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                             <div><IoIosSettings fontSize={30} /> </div>
                             <div>Setting</div>
                         </div> */}
-                        <div className='d-flex justify-content-start align-items-center gap-4 mb-1 ' style={{ color: 'red', cursor: "pointer" }} onClick={handleLogout}>
+                        <div className='d-flex justify-content-start align-items-center gap-4 mb-5 pb-2 border-bottom ' style={{ color: 'red', cursor: "pointer" }} onClick={handleLogout}>
                             <Avatar sx={{ backgroundColor: '#ff66c4' }}><TbLogout /> </Avatar>
                             <div> Log Out</div>
                         </div>
-                        <div className='d-flex justify-content-center align-items-center gap-1 p-2' style={{ backgroundColor: '#095fb8', color: 'white' }}>
+                        <div className='d-flex justify-content-start align-items-center gap-1 p-2 mt-5' style={{ backgroundColor: '#095fb8', color: 'white' }}>
                             <div><MdContactPhone style={{ fontSize: 30 }} /></div>
                             <div>CONTACT US</div>
                         </div>
-                        <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-2'>
+                        <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-3'>
                             <Avatar sx={{ backgroundColor: '#881e4c' }}><BiLogoGmail /></Avatar>
                             <div>info@kamp.org.in</div>
                         </div>

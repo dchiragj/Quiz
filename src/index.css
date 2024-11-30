@@ -35,8 +35,8 @@ code {
 }
 
 .direct-user-content img {
-  width: 10px;
-  height: 100px;
+  /* width: 10px;
+  height: 100px; */
   object-fit: contain;
   margin: auto;
   display: flex;
@@ -124,7 +124,7 @@ code {
 }
 .attemptcom{
   font-size: small;
-  font-weight: 800;
+  font-weight: 500;
 }
 .lineChatclss{
   padding: 3px;
@@ -144,7 +144,13 @@ code {
   justify-content: space-between;
   align-items: center;
   gap: 4px;
-  margin-bottom: 22px;
+  margin-bottom: 25px;
   border-bottom: 1px solid #0e0b0b;
   padding-bottom: 1px;
+}
+.my-button:active {
+  border-color: #ff5722;  /* Change the border color when clicked */
+}
+.css-debwa9{
+  background-color: #d9e6f3 !important;
 }

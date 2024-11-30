@@ -252,35 +252,26 @@ const MockTestPlay = () => {
               {/* <IoMdArrowRoundBack color="#000000" /> */}
             </IconButton>
 
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1,textAlign:'center' }}>
             PRACTICE TEST
             </Typography>
-            <div style={{ color: 'black' }}>
+            {/* <div style={{ color: 'black' }}>
               <div className="text-end d-flex justify-content-end align-items-center mr-2">Mock Test Time</div>
               <div className="text-end d-flex justify-content-end align-items-center mr-2" >
                 <h3 className="mr-2"><FcClock /> </h3>
                 <h3 >{formatTime(timeLeft)}</h3>
               </div>
-            </div>
+            </div> */}
           </Toolbar>
         </AppBar>
       </Box>
-      {/* <Box  >
-        <div className="text-end d-flex justify-content-end align-items-center">Mock Test Time</div>
-        <div className="text-end d-flex justify-content-end align-items-center" style={{
-          position: 'fixed',
-          top: '1px', // adjust as needed
-          right: '1px', // adjust as needed
-          backgroundColor: 'white', // optional: add background for better visibility
-          padding: '8px',
-          borderRadius: '5px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // optional: adds subtle shadow
-          zIndex: 1000
-        }}>
+      <Box  sx={{ backgroundColor: '#dcdcdc',position:'sticky',top:0}}>
+        <div className="text-end d-flex justify-content-end align-items-center mr-3">बचा हुआ समय / Remaining time:</div>
+        <div className="text-end d-flex justify-content-end align-items-center mr-3" >
           <h3 className="mr-2" style={{ color: 'red' }}><FcClock /> </h3>
           <h3 style={{ color: 'red' }}>{formatTime(timeLeft)}</h3>
         </div>
-      </Box> */}
+      </Box>
       <Box
         sx={{
           // height: "100vh",
@@ -415,15 +406,15 @@ const MockTestPlay = () => {
               </h5>
               <div className="p-3">
               <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1">
-                <div style={{ fontWeight: 600 }}>Total:</div>
+                <div style={{ fontWeight: 600 }}>TOTAL QUESTION</div>
                 <div>{result?.data?.totalQuestion}</div>
               </div>
               <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1 mt-2">
-                <div style={{ fontWeight: 600 }}>Correct:</div>
+                <div style={{ fontWeight: 600 }}>TOTAL CORRECT</div>
                 <div>{result?.data?.answeredQuestion}</div>
               </div>
               <div className="d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1 mt-2">
-                <div style={{ fontWeight: 600 }}>Percentage:</div>
+                <div style={{ fontWeight: 600 }}>PRECENTAGE</div>
                 <div>{result?.data?.percentage}</div>
               </div>
               <div style={{color:'red',fontSize:11}} >
