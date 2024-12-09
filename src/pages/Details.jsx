@@ -18,6 +18,7 @@ import { GetTotalQuizzAttemptList, GetUserDetails, PdfURL, QuizQuestionsList } f
 import { AuthContext } from "./context/AuthContext";
 import { toast } from "react-toastify";
 import kamplogo from "../assets/kamplogo.png";
+import LES from "../assets/les.png";
 import { saveAs } from 'file-saver';
 import { RxCross1 } from "react-icons/rx";
 
@@ -43,7 +44,7 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
         setIsPracticeTestVisible(!isPracticeTestVisible); // Toggle visibility
     };
     const handleRedirect = () => {
-        window.location.href = 'https://kamp.org.in/lesform?e=2210100809';
+        window.location.href = `https://kamp.org.in/lesform?e=${userDetails?.enrollmentNo}`;
     }
     const downloadPdf = (pdfUrl) => {
         alert(pdfUrl)
@@ -149,8 +150,8 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
         try {
             const response = await GetUserDetails();
             if (response.data.status) {
-                setUserDetails(response.data.data)
-                localStorage.setItem("user", JSON.stringify(response.data.data));
+                setUserDetails(response.data.data[0])
+                localStorage.setItem("user", JSON.stringify(response.data.data[0]));
                 setUser(response.data.data)
             } else {
                 toast.error(response.data.message);
@@ -353,6 +354,10 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                         </Card>
                     </div> */}
                 </div>
+
+                {!isPracticeTestVisible && (<div className="text-center mt-3">
+                    <img src={LES} width={"95%"} height={150} />
+                </div>)}
                 {isPracticeTestVisible && (
                     <div className="m-2 border border-black mt-3">
                         <h6 className="text-center p-2 m-2" style={{ backgroundColor: '#095fb8', borderRadius: 2, margin: 7, color: '#ffffff' }}>NASTA PRACTICE TEST SUMMARY</h6>

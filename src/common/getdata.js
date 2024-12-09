@@ -27,11 +27,9 @@ export const StudentGenerateOTP = (values) => {
 export const StudentLoginWithOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/Auth/LoginWithOTP`, values);
 };
-
 export const QuizQuestionsList = (values) => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetQuizzQuestionList`, {params: values, headers: authHeader() })
 }
-
 export const SaveQuizAnswer = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/SaveQuizzResult`, values, { headers: authHeader() })
 }
@@ -41,20 +39,20 @@ export const GetQuizResult = (values) => {
 export const UploadUserImage = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UploadUserImage`,values, { headers: authHeader() })
 }
-
 export const GetUserDetails = () => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/GetUserDetails`,{}, { headers: authHeader() });
 };
 export const ResendOTP = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/ResendOTP`,values);
 };
-
 export const GetFeedBackFormDetails = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetFeedBackFormDetails`,{headers:authHeader()});
-};
-
+}
 export const SaveFeedBackFormDetails = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/SaveFeedBackFormDetails`,values, { headers: authHeader() });
+};
+export const UpdateStudentDetails = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UpdateStudentDetails`,values, { headers: authHeader() });
 };
 export const GetURLAndStandardDetails = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetURLAndStandardDetails`, {} ,{ headers: authHeader() });

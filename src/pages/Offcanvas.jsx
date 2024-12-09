@@ -4,16 +4,16 @@ import { deepOrange, deepPurple } from '@mui/material/colors';
 import { Button } from 'react-bootstrap';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { IoIosLogOut } from "react-icons/io";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { CiBookmark } from "react-icons/ci";
 import { BiLogoGmail } from "react-icons/bi";
 import { MdContactPhone } from 'react-icons/md';
 import { IoCall } from 'react-icons/io5';
-import { BsBrowserChrome, BsWhatsapp } from 'react-icons/bs';
+import { BsBrowserChrome, BsTwitterX, BsWhatsapp } from 'react-icons/bs';
 import { TbLogout } from 'react-icons/tb';
-import demo from '../assets/user-image.jpg'
+import demo from '../assets/userimg.jpg'
 function Sidebar({ isOpen, setIsOpen, user }) {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate()
@@ -36,7 +36,39 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                     </Offcanvas.Header>
                     <Offcanvas.Body >
                         <div className='text-center'>
-                            <img src={storedUser?.userImage} width={100} height={100} className="rounded-circle" />
+                            <div style={{ position: "relative", display: "inline-block" }}>
+                                {/* Profile Image */}
+                                <img
+                                    src={storedUser?.imageUrl || demo}
+                                    alt="User"
+                                    width={100}
+                                    height={100}
+                                    className="rounded-circle"
+                                    style={{
+                                        border: "2px solid #fdd835", // Optional styling
+                                        backgroundColor: "#fdd835",
+                                    }}
+                                />
+                                {/* Add Icon */}
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        bottom: 5,
+                                        right: 5,
+                                        width: 25,
+                                        height: 25,
+                                        backgroundColor: "#4285f4",
+                                        borderRadius: "50%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        border: "2px solid #fff",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <span style={{ color: "#fff", fontSize: "16px", fontWeight: "bold" }}>+</span>
+                                </div>
+                            </div>
                             <div>{storedUser?.candidate_Name}</div>
                             <div className='border-bottom'>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
                         </div>
@@ -84,11 +116,37 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                             <div>www.kamp.org.in</div>
                         </div>
                     </Offcanvas.Body>
-                    {/* <Button className='text-center mx-auto'>
-                            <IoIosLogOut color='black' size={25} className='mr-2' />
-                            Log Out
-                        </Button> */}
-
+                    {/* Footer Section */}
+                    <div className="text-center p-3" style={{ backgroundColor: '#e9ecef', height: "100px" }}>
+                        <div style={{ fontWeight: 500 }}>Follow us on</div>
+                        <div className="d-flex justify-content-center gap-2 mt-2">
+                            <a href="https://www.facebook.com/kampnasta" target="_blank" rel="noopener noreferrer">
+                                <Avatar sx={{ backgroundColor: '#2b72eb', cursor: 'pointer', width: 30, height: 30 }}>
+                                    <FaFacebook />
+                                </Avatar>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCUEF4kDXx_gpHO1Qlc29KnQ" target="_blank" rel="noopener noreferrer">
+                                <Avatar sx={{ backgroundColor: '#e02121', width: 30, height: 30 }}>
+                                    <FaYoutube />
+                                </Avatar>
+                            </a>
+                            <a href="https://www.instagram.com/kampnasta/" target="_blank" rel="noopener noreferrer">
+                                <Avatar sx={{ backgroundColor: '#bc4d58', width: 30, height: 30 }}>
+                                    <FaInstagram />
+                                </Avatar>
+                            </a>
+                            <a href="https://in.linkedin.com/company/kampnasta" target="_blank" rel="noopener noreferrer">
+                                <Avatar sx={{ backgroundColor: '#080fee', width: 30, height: 30 }}>
+                                    <FaLinkedin />
+                                </Avatar>
+                            </a>
+                            <a href="https://x.com/Kampnasta" target="_blank" rel="noopener noreferrer">
+                                <Avatar sx={{ backgroundColor: '#302f32', width: 30, height: 30 }}>
+                                    <BsTwitterX />
+                                </Avatar>
+                            </a>
+                        </div>
+                    </div>
                 </Offcanvas>
             }
         </>

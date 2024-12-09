@@ -154,3 +154,8 @@ code {
 .css-debwa9{
   background-color: #d9e6f3 !important;
 }
+.MsoTableGrid{
+  border-collapse: collapse !important;
+    border: none !important;
+    width: auto !important;
+}

@@ -15,20 +15,22 @@ import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoMdMenu } from "react-icons/io";
 import { toast } from "react-toastify";
-import { GetUserDetails } from "../common/getdata";
+import { GetUserDetails, UpdateStudentDetails } from "../common/getdata";
 import moment from 'moment';
 import photo from '../assets/photo.png';
 import { FaRegEdit } from "react-icons/fa";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { VscSaveAs } from "react-icons/vsc";
+import { CiEdit } from "react-icons/ci";
 // import navbarlogo from "../assets/studentlogin.png";
 // import { FaRegUserCircle } from "react-icons/fa";
-// import user from "../assets/user-image.jpg";
+import demo from "../assets/userimg.jpg";
 // import document from "../assets/document.jpg";
 // import { AuthContext } from "./context/AuthContext";
 
-function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
+function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   // const urlSearchString = window. location.search; 
   // const params = new URLSearchParams(urlSearchString);
@@ -42,63 +44,83 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
   const location = useLocation();
   const studentData = location.state?.studentData.userData;
   const [isChecked, setIsChecked] = useState(false);
-  const [ProfileDetails, setProfileDetails] = useState();
-  const [show, setShow] = useState(false);
-  const [editField, setEditField] = useState(""); // Field to edit
-  const [editValue, setEditValue] = useState(""); // Value of the field being edited
+  // State management
+  const [userDetails, setUserDetails] = useState({});
+  const [formData, setFormData] = useState(userDetails);
+  const [isEditing, setIsEditing] = useState(true);
+  const [editedField, setEditedField] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = (field, value) => {
-    setEditField(field); // Set the field to edit
-    setEditValue(value); // Set the current value to edit
-    setShow(true);
+  console.log(formData, "formData");
+
+  const handleEditClick = (field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: true }));
+    setEditedField(field);
   };
 
-  const handleInputChange = (event) => {
-    setEditValue(event.target.value);
+  const handleSaveClick = (field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: false }));
+    UpdateStudentDetail()
+    GetprofileDetails()
   };
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setIsLoading(false); // Stop loading after 5 seconds
-  //   }, 5000);
-
-  //   return () => clearTimeout(timer); // Clean up the timer
-  // }, []);
-  // const toggleDrawer = (open) => () => {
-  //   setIsOpen(open);
-  // };
-  const handleCheck = () => {
-    setIsChecked(!isChecked);
+  const handleInputChange = (field, value) => {
+    console.log("Updating field:", field, "with value:", value);
+    setUserDetails((prev) => ({ ...prev, [field]: value }));
   };
-  useEffect(() => {
-    // GetprofileDetails()
-  }, [])
-  const GetprofileDetails = async () => {
-    setIsLoading(true)
+
+
+  const UpdateStudentDetail = async () => {
+    const updatedData = {
+      studentName: null,
+      fatherName: null,
+      gender: null,
+      enrollmentNo: userDetails.enrollmentNo, // Include the current enrollment number
+      mobileNo: null,
+      emailId: null,
+      areaTypeID: null,
+      stateID: null,
+      districtID: null,
+      cityID: null,
+      pinCode: null,
+      imageUrl: null,
+    };
+
+    // Update only the edited field with its new value
+    if (editedField) {
+      updatedData[editedField] = userDetails[editedField];
+    }
+    // Log the updated data to see what is being sent
+    console.log("Updated Data Sent to API:", updatedData);
     try {
-      const response = await GetUserDetails();
+      const response = await UpdateStudentDetails(updatedData);
+      console.log(response, "response");
+
       if (response.data.status) {
-        setIsLoading(false)
-        setProfileDetails(response.data.data);
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-        setUser(response.data.data)
-        // toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
-        setIsLoading(true)
       }
     } catch (error) {
       console.log("error-->", error);
-      // setIsLoading(true)
-
+    }
+  }
+  const GetprofileDetails = async () => {
+    try {
+      const response = await GetUserDetails();
+      if (response.data.status) {
+        setUserDetails(response.data.data[0])
+        setUser(response.data.data)
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error-->", error);
     }
   }
 
-  const handleSaveChanges = async (field, value, key) => {
-    console.log(`Updated ${editField}:`, editValue);
-    handleClose();
-  }
+  useEffect(() => {
+    GetprofileDetails()
+  }, [])
 
   return (
     <div className="offcanvas-bg" style={{ marginBottom: "72px" }}>
@@ -115,7 +137,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
             >
               <IoMdMenu fontSize="30px" style={{ color: "#000000" }} />
             </IconButton>
-            <img src={photo} width={40} height={40} style={{ marginRight: 10 }} />
+            {/* <img src={photo} width={40} height={40} style={{ marginRight: 10 }} /> */}
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               STUDENT PROFILE
             </Typography>
@@ -139,182 +161,193 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails }) {
       </Box>
       <div className="m-2 mt-4" style={{ padding: '20px', border: '1px solid #9f9393' }}>
         <div className="d-flex justify-content-center mb-3" >
-          <img src={storedUser?.userImage} alt="Student" width={200} height={150} />
+          <img className="rounded-circle p-1 border border-secondary" src={userDetails?.imageUrl || demo} alt="Student" width={150} height={150} />
         </div>
         <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
-          <div>{storedUser?.candidate_Name}</div>
-          {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>FATHER NAME</div>
-          <div>{storedUser?.fatherName}</div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>GENDER</div>
-          <div>{storedUser?.gender}</div>
+          <div style={{ fontWeight: 600 }}>SESSION</div>
+          <div>{userDetails?.session}</div>
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>SCHOOL NAME</div>
-          <div>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
+          <div>{userDetails?.schoolCode}-{userDetails?.schoolName}</div>
         </div>
         <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
-          <div>{storedUser?.enrollmentNo}</div>
+          <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['candidate_Name'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.candidate_Name || ''}
+                  onChange={(e) => handleInputChange('candidate_Name', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('candidate_Name')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.candidate_Name}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('candidate_Name')}
+                />
+              </>
+            )}
+          </div>
+          {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>CLASS</div>
-          <div>{storedUser?.classId}</div>
+          {/* <div>{userDetails?.classId}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['classId'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.classId}
+                  onChange={(e) => handleInputChange('classId', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('classId')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.classId}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('classId')}
+                />
+              </>
+            )}
+          </div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>GENDER</div>
+          {/* <div>{userDetails?.gender}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['gender'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.gender}
+                  onChange={(e) => handleInputChange('gender', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('gender')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.gender}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('gender')}
+                />
+              </>
+            )}
+          </div>
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>DATE OF BIRTH</div>
-          <div> {storedUser?.dateOfBirth ? moment(storedUser.dateOfBirth).format('DD/MM/YYYY') : ""}</div>
+          <div> {userDetails?.dateOfBirth ? moment(userDetails.dateOfBirth).format('DD/MM/YYYY') : ""}</div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600 }}>FATHER NAME</div>
+          {/* <div>{userDetails?.fatherName}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['fatherName'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.fatherName}
+                  onChange={(e) => handleInputChange('fatherName', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('fatherName')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.fatherName}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('fatherName')}
+                />
+              </>
+            )}
+          </div>
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>MOBILE NUMBER</div>
-          <div>{storedUser?.mobileNo}</div>
+          {/* <div>{userDetails?.mobileNo}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['mobileNo'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.mobileNo}
+                  onChange={(e) => handleInputChange('mobileNo', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('mobileNo')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.mobileNo}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('mobileNo')}
+                />
+              </>
+            )}
+          </div>
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>EMAIL ID</div>
-          <div>{storedUser?.emailId}</div>
+          {/* <div>{userDetails?.emailId}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['emailId'] ? (
+              <>
+                <input
+                  type="text"
+                  value={userDetails.emailId}
+                  onChange={(e) => handleInputChange('emailId', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('emailId')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span>{userDetails.emailId}</span>
+                <CiEdit
+                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('emailId')}
+                />
+              </>
+            )}
+          </div>
+        </div>
+        <div className='profilecom'>
+          <div style={{ fontWeight: 600}}>ENROLLMENT NUMBER</div>
+          <div>{userDetails?.enrollmentNo}</div>
         </div>
       </div>
-
-      <div>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>STUDENT PROFILE EDIT</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Edit {editField.replace(/_/g, ' ')}</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editValue}
-                  onChange={handleInputChange}
-                  placeholder={`Enter ${editField.replace(/_/g, ' ')}`}
-                  autoFocus
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleSaveChanges}>
-              Save Changes
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
-      {/* {isLoading ? <div className="text-center mt-5"><CircularProgress size={40} style={{ color: "black", }} /></div> : <div className="">
-        <Grid className="m-2">
-          <Grid item xs={12}>
-            <Card className="border border-primary rounded" style={{ marginBottom: "80px" }}>
-              <CardContent>
-                <Typography variant="h5" color="primary" className="mb-3">
-                  Student Details
-                </Typography>
-
-                <table className="w-100">
-                  <tbody>
-                    <tr className=" border-top border-bottom">
-                      <td className="py-1 ">
-                        <strong>Student Name</strong>
-                      </td>
-                      <td align="right">{storedUser?.candidate_Name}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">
-                        <strong>Father's Name</strong>
-                      </td>
-                      <td align="right">{storedUser?.fatherName}</td>
-                    </tr>
-                    <tr className=" border-top border-bottom">
-                      <td className="py-1" >
-                        <strong>Enrollment No</strong>
-                      </td>
-                      <td align="right">{storedUser?.enrollmentNo}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">
-                        <strong>Class</strong>
-                      </td>
-                      <td align="right">{storedUser?.classId}</td>
-                    </tr>
-                    <tr className=" border-top border-bottom">
-                      <td className="py-1">
-                        <strong>D.O.B</strong>{" "}
-                      </td>
-                      <td align="right">  {storedUser?.dateOfBirth
-                        ? moment(storedUser.dateOfBirth).format('DD/MM/YYYY')
-                        : ""}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">
-                        <strong>Mobile Number</strong>
-                      </td>
-                      <td align="right">{storedUser?.mobileNo}</td>
-                    </tr>
-                    <tr className=" border-top border-bottom">
-                      <td className="py-1">
-                        <strong>Gender</strong>
-                      </td>
-                      <td align="right">{storedUser?.gender}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">
-                        <strong>Email ID</strong>
-                      </td>
-                      <td align="right">{storedUser?.emailId}</td>
-                    </tr>
-                    <tr className=" border-top border-bottom ">
-                      <td className="py-1">
-                        <strong>School Name</strong>
-                      </td>
-                      <td align="right">{storedUser?.schoolName}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className="container mt-4">
-                  <div className="d-flex justify-content-center">
-                    <img src={`data:image/jpeg;base64,${storedUser?.userImage}`} alt="Student" className="w-50" />
-                  </div>
-                </div>
-              
-                <Row className="w-100">
-               
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={isChecked}
-                        onChange={handleCheck}
-                        color="primary"
-                      />
-                    }
-                    label="I hereby declare that the above information is true and correct."
-                  />
-               
-                </Row>
-                <div className="text-center">
-                  <Button
-                    variant="contained"
-                    
-                    disabled={!isChecked}
-                    style={{ fontWeight: "bold" }}
-                    onClick={() => navigate("/examintroduction")}
-                  >
-                    PROCEED
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-      </div>} */}
     </div>
   );
 }
