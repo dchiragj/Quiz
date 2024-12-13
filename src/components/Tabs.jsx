@@ -20,7 +20,7 @@ const TabsCom = () => {
         } else if (location.pathname === '/studentdetails') {
             setValue(1);
         }  else {
-            setValue(-1); // Invalid paths will have no tab selected
+            setValue(false); // Invalid paths will have no tab selected
         }
     }, [location.pathname]);
     const handleChange = (event, newValue) => {

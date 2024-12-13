@@ -1,34 +1,23 @@
 import {
   AppBar,
   Box,
-  Card,
-  CardContent,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  Grid,
+
   IconButton,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { toast } from "react-toastify";
-import { GetUserDetails, UpdateStudentDetails } from "../common/getdata";
+import { GetClassList, GetUserDetails, UpdateStudentDetails } from "../common/getdata";
 import moment from 'moment';
-import photo from '../assets/photo.png';
-import { FaRegEdit } from "react-icons/fa";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
+
 import { VscSaveAs } from "react-icons/vsc";
 import { CiEdit } from "react-icons/ci";
-// import navbarlogo from "../assets/studentlogin.png";
-// import { FaRegUserCircle } from "react-icons/fa";
+
 import demo from "../assets/userimg.jpg";
-// import document from "../assets/document.jpg";
-// import { AuthContext } from "./context/AuthContext";
+
 
 function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -38,20 +27,10 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
   // if (tokenString) {
   //   localStorage.setItem('tokenGet', tokenString);
   // }
-  const [isLoading, setIsLoading] = useState(false);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const studentData = location.state?.studentData.userData;
-  const [isChecked, setIsChecked] = useState(false);
-  // State management
+  const [classList, setClassList] = useState()
   const [userDetails, setUserDetails] = useState({});
-  const [formData, setFormData] = useState(userDetails);
   const [isEditing, setIsEditing] = useState(true);
   const [editedField, setEditedField] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-
-  console.log(formData, "formData");
 
   const handleEditClick = (field) => {
     setIsEditing((prev) => ({ ...prev, [field]: true }));
@@ -61,12 +40,27 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
   const handleSaveClick = (field) => {
     setIsEditing((prev) => ({ ...prev, [field]: false }));
     UpdateStudentDetail()
-    GetprofileDetails()
+    setTimeout(() => {
+      GetprofileDetails();
+    }, 1000);
   };
 
-  const handleInputChange = (field, value) => {
-    console.log("Updating field:", field, "with value:", value);
-    setUserDetails((prev) => ({ ...prev, [field]: value }));
+  // const handleInputChange = (field, value) => {
+  //   setUserDetails((prev) => ({ ...prev, [field]: value }));
+  // };
+  const handleInputChange = (key, value) => {
+    if (key === 'dateOfBirth') {
+      // Ensure the value is converted to your desired format for storage
+      setUserDetails((prev) => ({
+        ...prev,
+        [key]: moment(value, "YYYY-MM-DD"),
+      }));
+    } else {
+      setUserDetails((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    }
   };
 
 
@@ -74,28 +68,26 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
     const updatedData = {
       studentName: null,
       fatherName: null,
+      motherName: null,
       gender: null,
-      enrollmentNo: userDetails.enrollmentNo, // Include the current enrollment number
+      dateOfBirth: null,
+      enrollmentNo: userDetails.enrollmentNo,
       mobileNo: null,
       emailId: null,
+      classId: null,
       areaTypeID: null,
       stateID: null,
       districtID: null,
       cityID: null,
       pinCode: null,
-      imageUrl: null,
+      imageUrl: null
     };
 
-    // Update only the edited field with its new value
     if (editedField) {
       updatedData[editedField] = userDetails[editedField];
     }
-    // Log the updated data to see what is being sent
-    console.log("Updated Data Sent to API:", updatedData);
     try {
       const response = await UpdateStudentDetails(updatedData);
-      console.log(response, "response");
-
       if (response.data.status) {
       } else {
         toast.error(response.data.message);
@@ -118,8 +110,22 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
     }
   }
 
+  const ClassList = async () => {
+    try {
+      const response = await GetClassList();
+      if (response.data.status) {
+        setClassList(response.data)
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error-->", error);
+    }
+  }
+
   useEffect(() => {
     GetprofileDetails()
+    ClassList()
   }, [])
 
   return (
@@ -141,21 +147,6 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               STUDENT PROFILE
             </Typography>
-            {/* <div className="d-flex justify-content-between align-items-center gap-4"> */}
-            {/* <a className="navbar-brand" href="#">
-                <img src={navbarlogo} alt="Kamp Logo" width="75" height="50" />
-              </a> */}
-            {/* <Typography sx={{ color: "#FFFFFF" }}>National</Typography> */}
-
-            {/* Navbar Links */}
-
-            {/* <a
-                className="nav-link d-flex justify-content-center align-items-center"
-                style={{ color: "#FFFFFF" }}
-              >
-                <FaRegUserCircle /> NASTA 2023
-              </a> */}
-            {/* </div> */}
           </Toolbar>
         </AppBar>
       </Box>
@@ -176,7 +167,9 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {isEditing['candidate_Name'] ? (
               <>
-                <input
+                <TextField
+                  // multiline
+                  // rows={1}
                   type="text"
                   value={userDetails.candidate_Name || ''}
                   onChange={(e) => handleInputChange('candidate_Name', e.target.value)}
@@ -189,9 +182,9 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               </>
             ) : (
               <>
-                <span>{userDetails.candidate_Name}</span>
+                <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.candidate_Name}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('candidate_Name')}
                 />
               </>
@@ -199,18 +192,30 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
           </div>
           {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
         </div>
-        <div className='profilecom'>
+        <div className="profilecom">
           <div style={{ fontWeight: 600 }}>CLASS</div>
-          {/* <div>{userDetails?.classId}</div> */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {isEditing['classId'] ? (
               <>
-                <input
-                  type="text"
-                  value={userDetails.classId}
+                <select
+                  value={userDetails.classId || ""}
                   onChange={(e) => handleInputChange('classId', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
+                  style={{
+                    padding: '4px',
+                    fontSize: '14px',
+                    border: 'none',
+                    backgroundColor: 'rgb(218 226 234)',
+                  }}
+                >
+                  <option value="" disabled>
+                    --Choose Class--
+                  </option>
+                  {classList.data.map((cls) => (
+                    <option key={cls.classId} value={cls.classId}>
+                      {cls.className}
+                    </option>
+                  ))}
+                </select>
                 <VscSaveAs
                   onClick={() => handleSaveClick('classId')}
                   style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
@@ -218,9 +223,9 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               </>
             ) : (
               <>
-                <span>{userDetails.classId}</span>
+                <span>{userDetails.classId || '--Choose Class--'}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('classId')}
                 />
               </>
@@ -229,16 +234,24 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>GENDER</div>
-          {/* <div>{userDetails?.gender}</div> */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {isEditing['gender'] ? (
               <>
-                <input
-                  type="text"
+                <select
                   value={userDetails.gender}
                   onChange={(e) => handleInputChange('gender', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
+                  style={{
+                    padding: '4px',
+                    fontSize: '14px',
+                    border: 'none',
+                    backgroundColor: "rgb(218 226 234)",
+                    appearance: 'none'
+                  }}
+                >
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="O">Other</option>
+                </select>
                 <VscSaveAs
                   onClick={() => handleSaveClick('gender')}
                   style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
@@ -248,7 +261,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               <>
                 <span>{userDetails.gender}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('gender')}
                 />
               </>
@@ -257,7 +270,35 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>DATE OF BIRTH</div>
-          <div> {userDetails?.dateOfBirth ? moment(userDetails.dateOfBirth).format('DD/MM/YYYY') : ""}</div>
+          {/* <div> {userDetails?.dateOfBirth ? moment(userDetails.dateOfBirth).format('DD/MM/YYYY') : ""}</div> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isEditing['dateOfBirth'] ? (
+              <>
+                <input
+                  type="date"
+                  value={userDetails?.dateOfBirth
+                    ? moment(userDetails.dateOfBirth).format('YYYY-MM-DD') // Convert to valid format
+                    : ""}
+                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                />
+                <VscSaveAs
+                  onClick={() => handleSaveClick('dateOfBirth')}
+                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                />
+              </>
+            ) : (
+              <>
+                <span> {userDetails?.dateOfBirth && moment(userDetails.dateOfBirth, "YYYY-MM-DD").isValid()
+                  ? moment(userDetails.dateOfBirth, "YYYY-MM-DD").format('DD/MM/YYYY') // Display in readable format
+                  : "Invalid Date"}</span>
+                <CiEdit
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
+                  onClick={() => handleEditClick('dateOfBirth')}
+                />
+              </>
+            )}
+          </div>
         </div>
         <div className='profilecom'>
           <div style={{ fontWeight: 600 }}>FATHER NAME</div>
@@ -265,7 +306,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {isEditing['fatherName'] ? (
               <>
-                <input
+                <TextField
                   type="text"
                   value={userDetails.fatherName}
                   onChange={(e) => handleInputChange('fatherName', e.target.value)}
@@ -278,9 +319,9 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               </>
             ) : (
               <>
-                <span>{userDetails.fatherName}</span>
+                <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.fatherName}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('fatherName')}
                 />
               </>
@@ -296,7 +337,12 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
                 <input
                   type="text"
                   value={userDetails.mobileNo}
-                  onChange={(e) => handleInputChange('mobileNo', e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d{0,10}$/.test(value)) {
+                      handleInputChange('mobileNo', value);
+                    }
+                  }}
                   style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
                 />
                 <VscSaveAs
@@ -308,7 +354,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               <>
                 <span>{userDetails.mobileNo}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('mobileNo')}
                 />
               </>
@@ -336,7 +382,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
               <>
                 <span>{userDetails.emailId}</span>
                 <CiEdit
-                  style={{ color: 'red', cursor: 'pointer', fontSize: 'larger' }}
+                  style={{ cursor: 'pointer', fontSize: 'larger' }}
                   onClick={() => handleEditClick('emailId')}
                 />
               </>
@@ -344,7 +390,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
           </div>
         </div>
         <div className='profilecom'>
-          <div style={{ fontWeight: 600}}>ENROLLMENT NUMBER</div>
+          <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
           <div>{userDetails?.enrollmentNo}</div>
         </div>
       </div>

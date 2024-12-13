@@ -54,6 +54,15 @@ export const SaveFeedBackFormDetails = (values) => {
 export const UpdateStudentDetails = (values) => {
 	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UpdateStudentDetails`,values, { headers: authHeader() });
 };
+export const GetClassList = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/GetClassList`,values, { headers: authHeader() });
+};
+export const GetStateDistrictCityList = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/GetStateDistrictCityList`,values, { headers: authHeader() });
+};
+export const UpdateAddress = (values) => {
+	return axios.post(`${process.env.REACT_APP_URL}/api/UserAPI/UpdateAddress`,values, { headers: authHeader() });
+};
 export const GetURLAndStandardDetails = () => {
 	return axios.get(`${process.env.REACT_APP_URL}/api/UserAPI/GetURLAndStandardDetails`, {} ,{ headers: authHeader() });
 };

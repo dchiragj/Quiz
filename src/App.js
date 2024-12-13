@@ -1,6 +1,6 @@
 
 import './App.css';
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import MockTest from './pages/MockTest';
 import MockTestPlay from './pages/MockTestPlay';
 import MockTestSecond from './pages/FaceCapture';
@@ -14,13 +14,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FaceCapture from './pages/FaceCapture';
 import IdCardCapture from './pages/IdCardCapture';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './pages/Offcanvas';
 import FeedBackForm from './pages/FeedBackForm';
 import Videoplay from './pages/Videoplay';
 import Details from './pages/Details';
 import TabsCom from './components/Tabs';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Addresspage from './pages/Addresspage';
 
 
 
@@ -28,6 +29,20 @@ function App() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleBackButton = (event) => {
+      event.preventDefault();
+      navigate(-1); // Navigate back
+    };
+
+    document.addEventListener('backbutton', handleBackButton, false);
+
+    return () => {
+      document.removeEventListener('backbutton', handleBackButton);
+    };
+  }, [navigate]);
   return (
     <>
     <AuthProvider>
@@ -47,6 +62,7 @@ function App() {
         <Route path="/feedback" element={<FeedBackForm />} />
         <Route path="/idcard" element={<AuthProvider><IdCardCapture /></AuthProvider>} />
         <Route path="/videoplay" element={<Videoplay />} />
+        <Route path="/address" element={<Addresspage />} />
 
       </Routes>
     </AuthProvider>

@@ -159,3 +159,7 @@ code {
     border: none !important;
     width: auto !important;
 }
+.labletyle{
+  font-size: medium;
+  font-weight: 600;
+}
