@@ -135,7 +135,8 @@ code {
   background-image: url('./assets/bgappbar.png');
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  /* height: calc(100vh - 71px); */
+  /* overflow: auto; */
 }
 
 /* d-flex justify-content-between align-items-center gap-4 mb-1 border-bottom pb-1 mt-2 */

@@ -220,7 +220,7 @@ const Details = ({ isOpen, setIsOpen, setUser }) => {
                     </Toolbar>
                 </AppBar>
             </Box>
-            <div style={{ backgroundColor: "#f3f0f6", backgroundSize: "cover", backgroundPosition: "center" }}>
+            <div style={{ backgroundColor: "#f3f0f6", backgroundSize: "cover", backgroundPosition: "center" ,overflowY:'auto',height: "calc(100vh - 136px)"}}>
                 {/* {showMessage && (
                     <div className="m-2" style={{ color: 'green' }}>
                         Welcome! You have successfully logged in.

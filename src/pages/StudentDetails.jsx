@@ -129,7 +129,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
   }, [])
 
   return (
-    <div className="offcanvas-bg" style={{ marginBottom: "72px" }}>
+    <div className="" style={{ marginBottom: "72px" }}>
       <Box className="w-100">
         <AppBar position="static">
           <Toolbar className="d-flex justify-content-center align-items-center">
@@ -150,248 +150,250 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
           </Toolbar>
         </AppBar>
       </Box>
-      <div className="m-2 mt-4" style={{ padding: '20px', border: '1px solid #9f9393' }}>
-        <div className="d-flex justify-content-center mb-3" >
-          <img className="rounded-circle p-1 border border-secondary" src={userDetails?.imageUrl || demo} alt="Student" width={150} height={150} />
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>SESSION</div>
-          <div>{userDetails?.session}</div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>SCHOOL NAME</div>
-          <div>{userDetails?.schoolCode}-{userDetails?.schoolName}</div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['candidate_Name'] ? (
-              <>
-                <TextField
-                  // multiline
-                  // rows={1}
-                  type="text"
-                  value={userDetails.candidate_Name || ''}
-                  onChange={(e) => handleInputChange('candidate_Name', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
-                <VscSaveAs
-                  onClick={() => handleSaveClick('candidate_Name')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.candidate_Name}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('candidate_Name')}
-                />
-              </>
-            )}
+      <div className="offcanvas-bg" style={{ overflowY: 'auto', height: "calc(100vh - 136px)" }}>
+        <div className="m-2 mt-4 " style={{ padding: '20px', border: '1px solid #9f9393' }}>
+          <div className="d-flex justify-content-center mb-3" >
+            <img className="rounded-circle p-1 border border-secondary" src={userDetails?.imageUrl || demo} alt="Student" width={150} height={150} />
           </div>
-          {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
-        </div>
-        <div className="profilecom">
-          <div style={{ fontWeight: 600 }}>CLASS</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['classId'] ? (
-              <>
-                <select
-                  value={userDetails.classId || ""}
-                  onChange={(e) => handleInputChange('classId', e.target.value)}
-                  style={{
-                    padding: '4px',
-                    fontSize: '14px',
-                    border: 'none',
-                    backgroundColor: 'rgb(218 226 234)',
-                  }}
-                >
-                  <option value="" disabled>
-                    --Choose Class--
-                  </option>
-                  {classList.data.map((cls) => (
-                    <option key={cls.classId} value={cls.classId}>
-                      {cls.className}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>SESSION</div>
+            <div>{userDetails?.session}</div>
+          </div>
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>SCHOOL NAME</div>
+            <div>{userDetails?.schoolCode}-{userDetails?.schoolName}</div>
+          </div>
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>STUDENT NAME</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['candidate_Name'] ? (
+                <>
+                  <TextField
+                    // multiline
+                    // rows={1}
+                    type="text"
+                    value={userDetails.candidate_Name || ''}
+                    onChange={(e) => handleInputChange('candidate_Name', e.target.value)}
+                    style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                  />
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('candidate_Name')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.candidate_Name}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('candidate_Name')}
+                  />
+                </>
+              )}
+            </div>
+            {/* <FaRegEdit onClick={() => handleShow('candidate_Name', storedUser?.candidate_Name)} /> */}
+          </div>
+          <div className="profilecom">
+            <div style={{ fontWeight: 600 }}>CLASS</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['classId'] ? (
+                <>
+                  <select
+                    value={userDetails.classId || ""}
+                    onChange={(e) => handleInputChange('classId', e.target.value)}
+                    style={{
+                      padding: '4px',
+                      fontSize: '14px',
+                      border: 'none',
+                      backgroundColor: 'rgb(218 226 234)',
+                    }}
+                  >
+                    <option value="" disabled>
+                      --Choose Class--
                     </option>
-                  ))}
-                </select>
-                <VscSaveAs
-                  onClick={() => handleSaveClick('classId')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span>{userDetails.classId || '--Choose Class--'}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('classId')}
-                />
-              </>
-            )}
+                    {classList.data.map((cls) => (
+                      <option key={cls.classId} value={cls.classId}>
+                        {cls.className}
+                      </option>
+                    ))}
+                  </select>
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('classId')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span>{userDetails.classId || '--Choose Class--'}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('classId')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>GENDER</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['gender'] ? (
-              <>
-                <select
-                  value={userDetails.gender}
-                  onChange={(e) => handleInputChange('gender', e.target.value)}
-                  style={{
-                    padding: '4px',
-                    fontSize: '14px',
-                    border: 'none',
-                    backgroundColor: "rgb(218 226 234)",
-                    appearance: 'none'
-                  }}
-                >
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="O">Other</option>
-                </select>
-                <VscSaveAs
-                  onClick={() => handleSaveClick('gender')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span>{userDetails.gender}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('gender')}
-                />
-              </>
-            )}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>GENDER</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['gender'] ? (
+                <>
+                  <select
+                    value={userDetails.gender}
+                    onChange={(e) => handleInputChange('gender', e.target.value)}
+                    style={{
+                      padding: '4px',
+                      fontSize: '14px',
+                      border: 'none',
+                      backgroundColor: "rgb(218 226 234)",
+                      appearance: 'none'
+                    }}
+                  >
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                  </select>
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('gender')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span>{userDetails.gender}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('gender')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>DATE OF BIRTH</div>
-          {/* <div> {userDetails?.dateOfBirth ? moment(userDetails.dateOfBirth).format('DD/MM/YYYY') : ""}</div> */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['dateOfBirth'] ? (
-              <>
-                <input
-                  type="date"
-                  value={userDetails?.dateOfBirth
-                    ? moment(userDetails.dateOfBirth).format('YYYY-MM-DD') // Convert to valid format
-                    : ""}
-                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
-                <VscSaveAs
-                  onClick={() => handleSaveClick('dateOfBirth')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span> {userDetails?.dateOfBirth && moment(userDetails.dateOfBirth, "YYYY-MM-DD").isValid()
-                  ? moment(userDetails.dateOfBirth, "YYYY-MM-DD").format('DD/MM/YYYY') // Display in readable format
-                  : "Invalid Date"}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('dateOfBirth')}
-                />
-              </>
-            )}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>DATE OF BIRTH</div>
+            {/* <div> {userDetails?.dateOfBirth ? moment(userDetails.dateOfBirth).format('DD/MM/YYYY') : ""}</div> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['dateOfBirth'] ? (
+                <>
+                  <input
+                    type="date"
+                    value={userDetails?.dateOfBirth
+                      ? moment(userDetails.dateOfBirth).format('YYYY-MM-DD') // Convert to valid format
+                      : ""}
+                    onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                    style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                  />
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('dateOfBirth')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span> {userDetails?.dateOfBirth && moment(userDetails.dateOfBirth, "YYYY-MM-DD").isValid()
+                    ? moment(userDetails.dateOfBirth, "YYYY-MM-DD").format('DD/MM/YYYY') // Display in readable format
+                    : "Invalid Date"}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('dateOfBirth')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>FATHER NAME</div>
-          {/* <div>{userDetails?.fatherName}</div> */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['fatherName'] ? (
-              <>
-                <TextField
-                  type="text"
-                  value={userDetails.fatherName}
-                  onChange={(e) => handleInputChange('fatherName', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
-                <VscSaveAs
-                  onClick={() => handleSaveClick('fatherName')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.fatherName}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('fatherName')}
-                />
-              </>
-            )}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>FATHER NAME</div>
+            {/* <div>{userDetails?.fatherName}</div> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['fatherName'] ? (
+                <>
+                  <TextField
+                    type="text"
+                    value={userDetails.fatherName}
+                    onChange={(e) => handleInputChange('fatherName', e.target.value)}
+                    style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                  />
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('fatherName')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span style={{ overflowX: 'hidden', overflowY: 'auto', width: '166px', wordBreak: 'break-all', textAlign: 'right' }}>{userDetails.fatherName}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('fatherName')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>MOBILE NUMBER</div>
-          {/* <div>{userDetails?.mobileNo}</div> */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['mobileNo'] ? (
-              <>
-                <input
-                  type="text"
-                  value={userDetails.mobileNo}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (/^\d{0,10}$/.test(value)) {
-                      handleInputChange('mobileNo', value);
-                    }
-                  }}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
-                <VscSaveAs
-                  onClick={() => handleSaveClick('mobileNo')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span>{userDetails.mobileNo}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('mobileNo')}
-                />
-              </>
-            )}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>MOBILE NUMBER</div>
+            {/* <div>{userDetails?.mobileNo}</div> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['mobileNo'] ? (
+                <>
+                  <input
+                    type="text"
+                    value={userDetails.mobileNo}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d{0,10}$/.test(value)) {
+                        handleInputChange('mobileNo', value);
+                      }
+                    }}
+                    style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                  />
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('mobileNo')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span>{userDetails.mobileNo}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('mobileNo')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>EMAIL ID</div>
-          {/* <div>{userDetails?.emailId}</div> */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isEditing['emailId'] ? (
-              <>
-                <input
-                  type="text"
-                  value={userDetails.emailId}
-                  onChange={(e) => handleInputChange('emailId', e.target.value)}
-                  style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
-                />
-                <VscSaveAs
-                  onClick={() => handleSaveClick('emailId')}
-                  style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
-                />
-              </>
-            ) : (
-              <>
-                <span>{userDetails.emailId}</span>
-                <CiEdit
-                  style={{ cursor: 'pointer', fontSize: 'larger' }}
-                  onClick={() => handleEditClick('emailId')}
-                />
-              </>
-            )}
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>EMAIL ID</div>
+            {/* <div>{userDetails?.emailId}</div> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isEditing['emailId'] ? (
+                <>
+                  <input
+                    type="text"
+                    value={userDetails.emailId}
+                    onChange={(e) => handleInputChange('emailId', e.target.value)}
+                    style={{ padding: '4px', fontSize: '14px', border: 'none', backgroundColor: "rgb(218 226 234)" }}
+                  />
+                  <VscSaveAs
+                    onClick={() => handleSaveClick('emailId')}
+                    style={{ color: 'green', cursor: 'pointer', fontSize: 'larger' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <span>{userDetails.emailId}</span>
+                  <CiEdit
+                    style={{ cursor: 'pointer', fontSize: 'larger' }}
+                    onClick={() => handleEditClick('emailId')}
+                  />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='profilecom'>
-          <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
-          <div>{userDetails?.enrollmentNo}</div>
+          <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
+            <div>{userDetails?.enrollmentNo}</div>
+          </div>
         </div>
       </div>
     </div>
