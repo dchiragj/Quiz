@@ -160,6 +160,10 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
             <div>{userDetails?.session}</div>
           </div>
           <div className='profilecom'>
+            <div style={{ fontWeight: 600 }}>ENROLLMENT NO.</div>
+            <div>{userDetails?.enrollmentNo}</div>
+          </div>
+          <div className='profilecom'>
             <div style={{ fontWeight: 600 }}>SCHOOL NAME</div>
             <div>{userDetails?.schoolCode}-{userDetails?.schoolName}</div>
           </div>
@@ -330,7 +334,7 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
             </div>
           </div>
           <div className='profilecom'>
-            <div style={{ fontWeight: 600 }}>MOBILE NUMBER</div>
+            <div style={{ fontWeight: 600 }}>MOBILE NO.</div>
             {/* <div>{userDetails?.mobileNo}</div> */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {isEditing['mobileNo'] ? (
@@ -389,10 +393,6 @@ function StudentDetails({ isOpen, setIsOpen, setUser, profileDetails, onSave }) 
                 </>
               )}
             </div>
-          </div>
-          <div className='profilecom'>
-            <div style={{ fontWeight: 600 }}>ENROLLMENT NUMBER</div>
-            <div>{userDetails?.enrollmentNo}</div>
           </div>
         </div>
       </div>

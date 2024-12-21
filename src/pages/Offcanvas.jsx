@@ -6,7 +6,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import { IoIosLogOut } from "react-icons/io";
 import { FaChevronRight, FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { CiBookmark } from "react-icons/ci";
 import { BiLogoGmail } from "react-icons/bi";
 import { MdContactPhone } from 'react-icons/md';
@@ -28,7 +28,7 @@ function Sidebar({ isOpen, setIsOpen, user }) {
         setIsOpen(false)
     }
 
-    const handeladdress = () =>{
+    const handeladdress = () => {
         navigate("/address");
         setIsOpen(false)
     }
@@ -79,24 +79,15 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                             <div className='border-bottom'>{storedUser?.schoolCode}-{storedUser?.schoolName}</div>
                         </div>
                         <div className='d-flex justify-content-between align-items-center border-bottom pb-3 mb-1'>
-                            <div className='d-flex justify-content-start align-items-center gap-3  ' >
+                            <div className='d-flex justify-content-start align-items-center gap-3' >
                                 <Avatar sx={{ bgcolor: deepPurple[500] }}><FaRegUserCircle /></Avatar>
                                 <p style={{ paddingTop: '13px' }}>User Profile</p>
                             </div>
                             <FaChevronRight fontSize={25} onClick={handelnaviget} />
                         </div>
-                        {/* <div className='d-flex justify-content-start align-items-center gap-4 mb-3 border-bottom pb-3'>
-                            <div ><CiBookmark fontSize={30} /></div>
-                            <div>Saved Messages</div>
-                        </div>
-                        <div className='d-flex justify-content-start align-items-center gap-4 mb-3 border-bottom pb-3'>
-                            <div><IoIosSettings fontSize={30} /> </div>
-                            <div>Setting</div>
-                        </div> */}
-                      
                         <div className='d-flex justify-content-between align-items-center border-bottom pb-1'>
-                            <div className='d-flex justify-content-start align-items-center gap-3' >
-                                <Avatar sx={{ backgroundColor:'#B09FCA'}}><FaAddressCard  /></Avatar>
+                            <div className='d-flex justify-content-start align-items-center gap-3'>
+                                <Avatar sx={{ backgroundColor: '#B09FCA' }}><FaAddressCard /></Avatar>
                                 <p style={{ paddingTop: '13px' }}>Address</p>
                             </div>
                             <FaChevronRight fontSize={25} onClick={handeladdress} />
@@ -107,22 +98,28 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-3'>
                             <Avatar sx={{ backgroundColor: '#881e4c' }}><BiLogoGmail /></Avatar>
-                            <div>info@kamp.org.in</div>
+                            <div>
+                                <NavLink to="mailto:info@kamp.org.in" style={{ textDecoration: 'none', color: 'inherit' }}>info@kamp.org.in</NavLink>
+                            </div>
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-2'>
                             <Avatar sx={{ backgroundColor: '#e45a04' }}><IoCall /></Avatar>
                             <div>
-                                <div>+91-9599576228,</div>
-                                <div>+91-9289359694</div>
+                                <div>
+                                    <NavLink to="tel:+919599576228" style={{ textDecoration: 'none', color: 'inherit' }}>+91-9599576228</NavLink>
+                                </div>
+                                <div>
+                                    <NavLink to="tel:+919289359694" style={{ textDecoration: 'none', color: 'inherit' }}>+91-9289359694</NavLink>
+                                </div>
                             </div>
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-2'>
                             <Avatar sx={{ backgroundColor: '#1ba553' }}><BsWhatsapp /></Avatar>
-                            <div>+91-9717435123</div>
+                            <NavLink to='https://api.whatsapp.com/send/?phone=919717435123&text=Hi%2C+I+would+like+to+enquire+about+your+services&type=phone_number&app_absent=0' style={{ textDecoration: 'none', color: 'inherit' }}>+91-9717435123</NavLink>
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 mb-1 border-bottom pb-1 mt-2'>
                             <Avatar sx={{ backgroundColor: '#5e17eb' }}><BsBrowserChrome /></Avatar>
-                            <div>www.kamp.org.in</div>
+                            <NavLink to='https://kamp.org.in/' style={{ textDecoration: 'none', color: 'inherit' }}>www.kamp.org.in</NavLink>
                         </div>
                         <div className='d-flex justify-content-start align-items-center gap-4 border-bottom pb-1 mt-2' style={{ color: 'red', cursor: "pointer" }} onClick={handleLogout}>
                             <Avatar sx={{ backgroundColor: '#ff66c4' }}><TbLogout /> </Avatar>
@@ -133,31 +130,31 @@ function Sidebar({ isOpen, setIsOpen, user }) {
                     <div className="text-center p-3" style={{ backgroundColor: '#e9ecef', height: "100px" }}>
                         <div style={{ fontWeight: 500 }}>Follow us on</div>
                         <div className="d-flex justify-content-center gap-2 mt-2">
-                            <a href="https://www.facebook.com/kampnasta" target="_blank" rel="noopener noreferrer">
+                            <NavLink to="https://www.facebook.com/kampnasta" target="_blank" rel="noopener noreferrer">
                                 <Avatar sx={{ backgroundColor: '#2b72eb', cursor: 'pointer', width: 30, height: 30 }}>
                                     <FaFacebook />
                                 </Avatar>
-                            </a>
-                            <a href="https://www.youtube.com/channel/UCUEF4kDXx_gpHO1Qlc29KnQ" target="_blank" rel="noopener noreferrer">
+                            </NavLink>
+                            <NavLink to="https://www.youtube.com/channel/UCUEF4kDXx_gpHO1Qlc29KnQ" target="_blank" rel="noopener noreferrer">
                                 <Avatar sx={{ backgroundColor: '#e02121', width: 30, height: 30 }}>
                                     <FaYoutube />
                                 </Avatar>
-                            </a>
-                            <a href="https://www.instagram.com/kampnasta/" target="_blank" rel="noopener noreferrer">
+                            </NavLink>
+                            <NavLink to="https://www.instagram.com/kampnasta/" target="_blank" rel="noopener noreferrer">
                                 <Avatar sx={{ backgroundColor: '#bc4d58', width: 30, height: 30 }}>
                                     <FaInstagram />
                                 </Avatar>
-                            </a>
-                            <a href="https://in.linkedin.com/company/kampnasta" target="_blank" rel="noopener noreferrer">
+                            </NavLink>
+                            <NavLink to="https://in.linkedin.com/company/kampnasta" target="_blank" rel="noopener noreferrer">
                                 <Avatar sx={{ backgroundColor: '#080fee', width: 30, height: 30 }}>
                                     <FaLinkedin />
                                 </Avatar>
-                            </a>
-                            <a href="https://x.com/Kampnasta" target="_blank" rel="noopener noreferrer">
+                            </NavLink>
+                            <NavLink to="https://x.com/Kampnasta" target="_blank" rel="noopener noreferrer">
                                 <Avatar sx={{ backgroundColor: '#302f32', width: 30, height: 30 }}>
                                     <BsTwitterX />
                                 </Avatar>
-                            </a>
+                            </NavLink>
                         </div>
                     </div>
                 </Offcanvas>

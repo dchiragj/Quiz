@@ -1,11 +1,11 @@
 
-import { AppBar, Box, CardContent, FormControl, IconButton, Input, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, CardContent, CircularProgress, FormControl, IconButton, Input, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Toolbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Button, Card } from 'react-bootstrap'
 import { IoMdArrowRoundBack } from 'react-icons/io'
 import { GrMapLocation } from "react-icons/gr";
 import { HiDotsVertical } from 'react-icons/hi';
-import { GetStateDistrictCityList, UpdateAddress } from '../common/getdata';
+import { GetStateDistrictCityList, GetUserDetails, UpdateAddress } from '../common/getdata';
 import { toast } from 'react-toastify';
 import { MdModeEdit } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -13,35 +13,38 @@ import { useNavigate } from 'react-router-dom';
 
 const Addresspage = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    const [addressData, setAddressData] = React.useState(JSON.parse(localStorage.getItem("user")));
-    const [formData, setFormData] = useState();
+    const [addressData, setAddressData] = React.useState({});
+    const [loading, setLoading] = useState(false);
+    const [address, setAddress] = useState();
     const navigate = useNavigate();
     const [stateList, setStateList] = React.useState([]);
     const [districtList, setDistrictList] = React.useState([]);
     const [cityList, setCityList] = React.useState([]);
     const [isEnabled, setIsEnabled] = React.useState(false);
 
+
+    useEffect(() => {
+        GetprofileDetails()
+    }, [])
     const handleChange = (event) => {
         const { value } = event.target;
-        setFormData((prev) => ({
+        setAddressData((prev) => ({
             ...prev,
             areaTypeID: value, // Update the selected area type ID
-            areaName: value === "2" ? "Rural" : "Urban", // Update the area name
+            areaName: value === 2 ? "Rural" : "Urban", // Update the area name
         }));
     };
     const handleAddressChange = (event) => {
         const { value } = event.target;
-        setFormData((prev) => ({
-            ...prev,
-            address: value, // Update the address in formData
-        }));
+        setAddress(value);
     };
     const fetchDropdownData = async (flag, stateID = 0, districtID = 0) => {
-        setFormData(addressData)
+        // setAddressData(addressData)
         const payload = { flag, stateID, districtID };
         try {
             const response = await GetStateDistrictCityList(payload);
             if (response.data.status) {
+                setAddress(addressData.address)
                 setIsEnabled(true)
                 const { data } = response.data;
                 switch (flag) {
@@ -67,9 +70,7 @@ const Addresspage = () => {
     };
     const handleStateChange = (event) => {
         const stateID = event.target.value;
-        console.log(stateID, "stateID");
-
-        setFormData((prev) => ({
+        setAddressData((prev) => ({
             ...prev,
             stateID,
             districtID: '',
@@ -80,35 +81,48 @@ const Addresspage = () => {
 
     const handleDistrictChange = (event) => {
         const districtID = event.target.value;
-        setFormData((prev) => ({
+        setAddressData((prev) => ({
             ...prev,
             districtID,
             cityID: '',
         }));
-        fetchDropdownData('CityList', 0, districtID);
+        fetchDropdownData('CityList', 0, 5);
     };
     const handleCityChange = (event) => {
-        setFormData((prev) => ({
+        setAddressData((prev) => ({
             ...prev,
             cityID: event.target.value,
         }));
     };
-    const handleUpdateAddress = async () => {
+    const handleZipCodeChange = (event) => {
+        const { value } = event.target;
+        setAddressData((prev) => ({
+            ...prev,
+            pinCode: value, // Update the pinCode in addressData
+        }));
+    };
 
+    const handleUpdateAddress = async () => {
         const updatedData = {
             enrollmentNo: storedUser.enrollmentNo,
-            areatype: formData.areaTypeID,
-            address: formData.address,
-            state: formData.stateID,
-            distcit: formData.districtID,
-            city: formData.cityID,
-            pincode: formData.pinCode,
+            areaTypeID: Number(addressData.areaTypeID),
+            address: address,
+            stateID: addressData.stateID,
+            districtID: addressData.districtID,
+            cityID: addressData.cityID,
+            pincode: addressData.pinCode,
         };
         try {
             const response = await UpdateAddress(updatedData);
             if (response.data.status) {
-                toast.success(response.data.message);
+                toast.success(response.data.message,{
+                    style:{
+                        backgroundColor: '#d1e7dd',
+                        color: '#0f5132'
+                    }
+                });
                 setIsEnabled(false)
+                GetprofileDetails()
             } else {
                 // toast.error(response.data.message);
             }
@@ -117,6 +131,21 @@ const Addresspage = () => {
         }
     };
 
+    const GetprofileDetails = async () => {
+        setLoading(true)
+        try {
+            const response = await GetUserDetails();
+            if (response.data.status) {
+                setAddressData(response.data.data[0])
+                setLoading(false)
+            } else {
+                toast.error(response.data.message);
+                setLoading(false)
+            }
+        } catch (error) {
+            console.log("error-->", error);
+        }
+    }
 
     return (
         <div style={{ marginBottom: "50px" }}>
@@ -135,7 +164,7 @@ const Addresspage = () => {
                         </IconButton>
                         {/* <img src={photo} width={40} height={40} style={{ marginRight: 10 }} /> */}
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            ADDRESS
+                            Address Details
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -143,65 +172,67 @@ const Addresspage = () => {
 
             <div className="offcanvas-bg" style={{ overflowY: 'auto', height: "calc(100vh - 120px)", marginTop: '50px' }}>
                 <div className='m-2'>
-                    <Box
-                        sx={{
-                            backgroundColor: "#dee2e6",
-                            border: "1px solid #e0e0e0",
-                            borderRadius: "8px",
-                            padding: "8px",
-                            margin: "16px 0",
-                            textAlign: "center",
-                            maxWidth: "600px",
-                            mx: "auto", // centers horizontally
-                        }}
-                    >
-                        <div className='d-flex justify-content-between align-items-start'>
-                            <div className='d-flex flex-column align-items-start'>
-                                
-                               
-                                <div className='d-flex'>
-                                    <div className='comtest'>Area Type:</div>
-                                    <div>&nbsp;{addressData?.areaName}</div>
+                    {loading ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: '200px', // Adjust height as needed
+                            }}
+                        >
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <Box
+                            sx={{
+                                backgroundColor: "#dee2e6",
+                                border: "1px solid #e0e0e0",
+                                borderRadius: "8px",
+                                padding: "8px",
+                                margin: "16px 0",
+                                textAlign: "center",
+                                maxWidth: "600px",
+                                mx: "auto", // centers horizontally
+                            }}
+                        >
+                            <div className='d-flex justify-content-between align-items-start'>
+                                <div className='d-flex flex-column align-items-start'>
+
+
+                                    <div className='d-flex'>
+                                        <div className='comtest'>Area Type:</div>
+                                        <div>&nbsp;{addressData?.areaName}</div>
+                                    </div>
+                                    <div className='d-flex'>
+                                        <div className='comtest'>State:</div>
+                                        <div>&nbsp;{addressData?.stateName}</div>
+                                    </div>
+                                    <div className='d-flex'>
+                                        <div className='comtest'>District:</div>
+                                        <div>&nbsp;{addressData?.districtName} </div>
+                                    </div>
+                                    <div className='d-flex'>
+                                        <div className='comtest'>City :</div>
+                                        <div>&nbsp;{addressData?.cityName}</div>
+                                    </div>
+
+                                    <div className='d-flex'>
+                                        <div className='comtest'>Pin Code:</div>
+                                        <div>&nbsp;{addressData?.pinCode}</div>
+                                    </div>
+                                    <div className='d-flex'>
+                                        <div className='comtest'>Address: </div>
+                                        <div className='text-left'>&nbsp;{addressData?.address}</div>
+                                    </div>
                                 </div>
-                                <div className='d-flex'>
-                                    <div className='comtest'>State:</div>
-                                    <div>&nbsp;{addressData?.stateName}</div>
-                                </div>
-                                <div className='d-flex'>
-                                    <div className='comtest'>District:</div>
-                                    <div>&nbsp;{addressData?.districtName} </div>
-                                </div>
-                                <div className='d-flex'>
-                                    <div className='comtest'>City :</div>
-                                    <div>&nbsp;{addressData?.cityName}</div>
-                                </div>
-                              
-                                <div className='d-flex'>
-                                    <div className='comtest'>Pin Code:</div>
-                                    <div>&nbsp;{addressData?.pinCode}</div>
-                                </div>
-                                <div className='d-flex'>
-                                    <div className='comtest'>Address: </div>
-                                    <div className='text-left'>&nbsp;{addressData?.address}</div>
-                                </div>
+                                <div> <button className='btn btn-outline-primary' onClick={() => fetchDropdownData('StateList')}  >Edit</button></div>
                             </div>
-                            <div> <Button onClick={() => fetchDropdownData('StateList')}  >Edit</Button></div>
-                        </div>
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                            <div className='comtest'>{formData?.candidate_Name}</div>
-                            <Button onClick={() => fetchDropdownData('StateList')}  ><MdModeEdit />Edit</Button>
-                        </div>
-                        <div className='d-flex align-items-center'>
-                            <div><GrMapLocation fontSize="25px" /></div>
-                            <div className='ml-4'>{formData?.address}</div>
-                        </div> */}
-
-                    </Box>
+                        </Box>
+                    )}
                 </div>
-
-
-
                 {isEnabled ? <>
+                <div style={{fontWeight:600 ,textAlign:"center",margin:"5px"}}>Update Address</div>
                     <div className='mx-2'>
                         <Box sx={{ minWidth: 120 }}>
                             <FormControl fullWidth>
@@ -210,7 +241,7 @@ const Addresspage = () => {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="Area type:"
-                                    value={formData?.areaTypeID}
+                                    value={addressData?.areaTypeID}
                                     onChange={handleChange}
                                 // disabled={isEnabled}
                                 >
@@ -222,20 +253,11 @@ const Addresspage = () => {
                     </div>
                     <div className='mx-2 my-3'>
                         <Box >
-                            <TextareaAutosize   label="Address:" style={{ width: "100%"}}
-                                aria-label="minimum height" minRows={2} 
+                            <TextareaAutosize label="Address:" style={{ width: "100%", backgroundColor: "#f6f6fe" }}
+                                aria-label="minimum height" minRows={2}
                                 placeholder="address..."
-                                defaultValue={formData?.address} onChange={handleAddressChange} />
+                                defaultValue={address} onChange={handleAddressChange} />
                         </Box>
-                        {/* <div className='d-flex justify-content-between align-items-start'>
-                    <div className='labletyle'>Address:</div>
-                    <TextField id="outlined-multiline-static"
-                        multiline
-                        rows={2}
-                        defaultValue={formData?.address}
-                        disabled={isEnabled}
-                    />
-                </div> */}
                     </div>
                     <div className='mx-2 '>
                         <Box sx={{ minWidth: 120 }}>
@@ -245,30 +267,18 @@ const Addresspage = () => {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="State:"
-                                    value={formData.stateID || ''} onChange={handleStateChange}
+                                    value={addressData.stateID || ''}
+                                    onChange={handleStateChange}
                                 >
-                                    <MenuItem value={formData.stateID}>{formData.stateName}</MenuItem>
-                                    {stateList && stateList.map((state) => (
-                                        <MenuItem key={state.stateId} value={state.stateId}>
+                                    {/* <MenuItem value={addressData.stateID}>{addressData.cityName}</MenuItem> */}
+                                    {stateList && stateList?.map((state) => (
+                                        <MenuItem key={state.stateID} value={state.stateID}>
                                             {state.stateName}
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Box>
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                    <div className='labletyle'>State:</div>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
-                        <Select value={formData.stateID || ''} onChange={handleStateChange} disabled={isEnabled}>
-                            <MenuItem value={formData.stateID}>{formData.stateName}</MenuItem>
-                            {stateList && stateList.map((state) => (
-                                <MenuItem key={state.stateId} value={state.stateId}>
-                                    {state.stateName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </div> */}
                     </div>
                     <div className='mx-2 my-3'>
                         <Box sx={{ minWidth: 120 }}>
@@ -278,13 +288,13 @@ const Addresspage = () => {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="District:"
-                                    value={formData.districtID || ""}
+                                    value={addressData.districtID || ""}
                                     onChange={handleDistrictChange}
 
                                 >
-                                    <MenuItem value={formData.districtID}>{formData.districtName}</MenuItem>
-                                    {districtList.map((state) => (
-                                        <MenuItem key={state.districtId} value={state.districtId}>
+                                    <MenuItem value={addressData.districtID}>{addressData.districtName}</MenuItem>
+                                    {districtList && districtList?.map((state) => (
+                                        <MenuItem key={state.districtID} value={state.districtID}>
                                             {state.districtName}
                                         </MenuItem>
                                     ))}
@@ -292,23 +302,6 @@ const Addresspage = () => {
                             </FormControl>
                         </Box>
 
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                    <div className='labletyle'>District:</div>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }} >
-                        <Select
-                            value={formData.districtID || ""}
-                            onChange={handleDistrictChange}
-                            disabled={isEnabled}
-                        >
-                            <MenuItem value={formData.districtID}>{formData.districtName}</MenuItem>
-                            {districtList.map((state) => (
-                                <MenuItem key={state.districtId} value={state.districtId}>
-                                    {state.districtName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </div> */}
                     </div>
                     <div className='mx-2'>
                         <Box sx={{ minWidth: 120 }}>
@@ -318,11 +311,11 @@ const Addresspage = () => {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="City:"
-                                    value={formData.cityID || ""}
+                                    value={addressData.cityID || ""}
                                     onChange={handleCityChange}
 
                                 >
-                                    <MenuItem value={formData.cityID}>{formData.cityName}</MenuItem>
+                                    <MenuItem value={addressData.cityID}>{addressData.cityName}</MenuItem>
                                     {cityList.map((state) => (
                                         <MenuItem key={state.cityID} value={state.cityID}>
                                             {state.cityName}
@@ -331,39 +324,17 @@ const Addresspage = () => {
                                 </Select>
                             </FormControl>
                         </Box>
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                    <div className='labletyle'>City:</div>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }} >
-                        <Select
-                            value={formData.cityID || ""}
-                            onChange={handleCityChange}
-                            disabled={isEnabled}
-                        >
-                            <MenuItem value={formData.cityID}>{formData.cityName}</MenuItem>
-                            {cityList.map((state) => (
-                                <MenuItem key={state.cityID} value={state.cityID}>
-                                    {state.cityName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </div> */}
                     </div>
                     <div className='mx-2 my-3'>
-                        {/* <Box sx={{ width: 500, maxWidth: '100%' }}>
-                    <TextField fullWidth label="Zip Code:" defaultValue={formData.pinCode || ''} disabled={isEnabled} />
-                </Box> */}
                         <Box sx={{ width: "auto", maxWidth: 'auto' }}>
                             <TextField fullWidth label="Zip Code:" id="Zip Code" multiline
                                 rows={1}
-                                defaultValue={formData?.pinCode} />
+                                defaultValue={addressData?.pinCode} inputProps={{
+                                    maxLength: 6, 
+                                    inputMode: 'numeric', 
+                                    pattern: '[0-9]*', 
+                                  }} onChange={handleZipCodeChange}/>
                         </Box>
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                    <div className='labletyle'>Zip Code:</div>
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }} >
-                        <Input placeholder="Placeholder" value={formData.pinCode} disabled={isEnabled} />
-                    </FormControl>
-                </div> */}
                     </div>
                     <div className="text-center mt-3 mb-3">
                         <Button

@@ -47,7 +47,12 @@ const FeedBackForm = () => {
     try {
       const response = await SaveFeedBackFormDetails(payload);
       if (response.data.status) {
-        toast.success(response.data.message);
+        toast.success(response.data.message,{
+          style:{
+              backgroundColor: '#d1e7dd',
+              color: '#0f5132'
+          }
+      });
         navigate('/details');
       } else {
         toast.error(response.data.message);
